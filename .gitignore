@@ -1,0 +1,25 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+runs/
+weights/
+datasets/
+*.pt
+*.onnx
+*.engine
+*.torchscript
+*.log
+.env
+.DS_Store
+
+# incluir el modelo real entrenado (activo del producto)
+!models/*.pt
+realdata/
+real_eval/

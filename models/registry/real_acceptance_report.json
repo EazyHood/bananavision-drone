@@ -1,0 +1,21 @@
+{
+  "source": "real held-out test split (DS-v1 AI-BananaMapping UAV)",
+  "dataset": "AI-BananaMapping DS-v1 (Zenodo 20945958, CC-BY-4.0)",
+  "tolerance": "YOLO box IoU@0.5 (ultralytics val)",
+  "metrics": {
+    "images": 4611,
+    "truth_count": 6017,
+    "prediction_count": 5839,
+    "true_positives": 2756,
+    "false_positives": 3083,
+    "false_negatives": 3261,
+    "precision": 0.472,
+    "recall": 0.458,
+    "f1": 0.4649,
+    "map50": 0.411,
+    "map50_95": 0.164,
+    "count_error": 178,
+    "count_error_rate": 0.0296
+  },
+  "note": "Cifras REALES de campo. El error de conteo agregado (~3%) es menor que el mAP50 porque FP y FN se compensan en el total. NO garantiza <=X% en otra finca sin validar."
+}

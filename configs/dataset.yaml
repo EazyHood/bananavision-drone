@@ -1,0 +1,8 @@
+# Ultralytics segmentation dataset template.
+# Copy this file next to your dataset and adjust path/train/val/test.
+path: /data/banana-uav
+train: images/train
+val: images/val
+test: images/test
+names:
+  0: banana_plant

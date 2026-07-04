@@ -1,0 +1,29 @@
+# BananaVision default UAV inference profile.
+#
+# Tune gsd_cm and expected_crown_diameter_m for each flight/cultivar.
+# Example: if the orthomosaic has 2 cm/pixel and banana crown diameter is
+# around 2.4 m, expected_crown_diameter_px is about 120 px.
+detector: rgb-canopy
+model_path:
+confidence_threshold: 0.25
+iou_threshold: 0.45
+gsd_cm: 2.0
+expected_crown_diameter_m: 2.4
+min_component_area_px: 80
+max_component_area_px:
+split_mat_clusters: true
+min_center_distance_ratio: 0.42
+# Weight for distance-transform center peaks when splitting touching banana mats.
+# Higher values help YOLO/segmentation masks whose confidence map is nearly flat.
+center_distance_weight: 0.35
+canopy_fill_ratio: 0.58
+# Banana leaves often connect several mats into one component; keep this high
+# enough for grouped plants, then validate with cluster-benchmark/acceptance.
+max_split_instances: 12
+tile_size: 1024
+tile_overlap: 128
+class_name: banana_plant
+rgb_threshold_quantile: 0.82
+output_overlay: true
+mission_geo_dedupe_distance_m: 1.2
+mission_pixel_dedupe_distance_px: 32.0

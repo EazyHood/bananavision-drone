@@ -1,0 +1,19 @@
+# Perfil de inferencia con el MODELO ENTRENADO CON IMÁGENES REALES.
+# Detector YOLO (cajas) entrenado sobre ~14k tiles UAV reales de banano.
+detector: yolo-seg
+model_path: models/banana_real_v1.pt
+confidence_threshold: 0.30
+iou_threshold: 0.45
+gsd_cm: 2.0
+expected_crown_diameter_m: 2.4
+min_component_area_px: 80
+split_mat_clusters: true
+min_center_distance_ratio: 0.42
+center_distance_weight: 0.35
+canopy_fill_ratio: 0.58
+max_split_instances: 12
+tile_size: 1024
+tile_overlap: 128
+class_name: banana_plant
+rgb_threshold_quantile: 0.82
+output_overlay: true
