@@ -52,6 +52,8 @@ detector cuenta el cultivo **sin sesgo**). Reproducible:
 python real_data/calibrate_count.py --weights models/banana_real_v3.pt --data-root RUTA/dataset
 ```
 
+📊 **Pruebas visuales** (conteo IA vs real, cajas sobre plantas reales, animación): ver [`docs/evidencia/`](docs/evidencia/).
+
 **Qué significa este 98% (sin letra pequeña):**
 
 - Es acierto de **conteo AGREGADO sobre un área** (inventario total de plantas), **no** que
