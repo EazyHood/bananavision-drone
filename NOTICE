@@ -6,7 +6,7 @@ Proprietary license — see LICENSE. SELLING or commercial exploitation is
 PROHIBITED without the author's written permission.
 
 --------------------------------------------------------------------------------
-Included trained model: models/banana_real_v3.pt
+Included trained model: models/banana_real_v5.pt
 --------------------------------------------------------------------------------
 The included model was trained on the "count-banana-plants" dataset (aerial UAV
 imagery of banana plantations, per-plant bounding-box labels).

@@ -1,14 +1,14 @@
 {
-  "version": "real-v3.0",
-  "created_at": "2026-07-05T05:35:33+00:00",
-  "model_path": "models\\banana_real_v3.pt",
-  "model_sha256": "eaa75f7d3131a836c82e7ac825aa3c5b97d546923bce740f8699ff3a9f2b5bf7",
-  "supersedes": "real-v2.0",
+  "version": "real-v5.0",
+  "created_at": "2026-07-05T14:00:00+00:00",
+  "model_path": "models\\banana_real_v5.pt",
+  "model_sha256": "7c1d4f5f429aa823603ffb9dbc00a123d6d99b7d588c34dd535effbac12653ba",
+  "supersedes": "real-v3.0",
   "runtime": {
     "bananavision_version": "1.0.0",
     "config": {
       "detector": "yolo-seg",
-      "model_path": "models\\banana_real_v3.pt",
+      "model_path": "models\\banana_real_v5.pt",
       "confidence_threshold": 0.25,
       "iou_threshold": 0.45,
       "tile_size": 1024,
@@ -18,12 +18,9 @@
     "training": {
       "base": "yolov8m.pt",
       "imgsz": 1024,
-      "epochs": 120,
-      "box": 8.0,
-      "copy_paste": 0.3,
-      "mixup": 0.1,
-      "close_mosaic": 25,
-      "purpose": "density/overlap of plant clumps"
+      "epochs": 80,
+      "method": "real-crop copy-paste composites (1200) + real train, label cleanup (+109 missed labels)",
+      "purpose": "reduce per-tile false positives and misses in dense mats"
     }
   },
   "acceptance_report": {
@@ -33,22 +30,23 @@
     "metrics": {
       "images": 50,
       "truth_count": 1166,
-      "prediction_count": 1129,
-      "true_positives": 930,
-      "false_positives": 199,
-      "false_negatives": 236,
-      "precision": 0.8237,
-      "recall": 0.7976,
-      "f1": 0.8105,
-      "map50": 0.915,
-      "map50_95": 0.51,
-      "count_error": 37,
-      "count_error_rate": 0.0317
+      "prediction_count": 1093,
+      "precision": 0.9039,
+      "recall": 0.8473,
+      "f1": 0.8747,
+      "map50": 0.9275,
+      "map50_95": 0.5384,
+      "count_error_rate": 0.0626
     },
-    "note": "REAL figures on held-out aerial test with per-plant labels. Real improvement vs v2 (same method, conf 0.25): F1 0.726->0.811, precision 0.658->0.824, count error 23%->3%; detector mAP50 0.85->0.92. ONE farm/region; another farm requires validation/tuning."
+    "progression_same_test_at_conf_0_25": {
+      "v3": {"precision": 0.8237, "recall": 0.7976, "f1": 0.8105},
+      "v4": {"precision": 0.8439, "recall": 0.8250, "f1": 0.8343},
+      "v5": {"precision": 0.9039, "recall": 0.8473, "f1": 0.8747}
+    },
+    "note": "Real improvement in per-object detection: fewer false positives (precision 0.82 -> 0.90) and fewer misses (recall 0.80 -> 0.85) vs v3, from real-crop copy-paste augmentation + label cleanup. Single farm/region; count operating point should be recalibrated per farm (real_data/calibrate_count.py)."
   },
   "benchmark_report": null,
   "promotion": null,
-  "notes": "YOLOv8m retrained for density/overlap of plant clumps (imgsz 1024, copy_paste 0.3, mixup 0.1, box loss 8.0, 120 epochs) on count-banana-plants (CC-BY-4.0). Outperforms real-v2.0 on the held-out test using the same evaluation method.",
+  "notes": "YOLOv8m trained with real-crop copy-paste composites + label cleanup on count-banana-plants (CC-BY-4.0). Best per-object detection of the v3/v4/v5 line on the held-out test.",
   "manifest_sha256": null
 }

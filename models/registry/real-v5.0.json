@@ -1,0 +1,52 @@
+{
+  "version": "real-v5.0",
+  "created_at": "2026-07-05T14:00:00+00:00",
+  "model_path": "models\\banana_real_v5.pt",
+  "model_sha256": "7c1d4f5f429aa823603ffb9dbc00a123d6d99b7d588c34dd535effbac12653ba",
+  "supersedes": "real-v3.0",
+  "runtime": {
+    "bananavision_version": "1.0.0",
+    "config": {
+      "detector": "yolo-seg",
+      "model_path": "models\\banana_real_v5.pt",
+      "confidence_threshold": 0.25,
+      "iou_threshold": 0.45,
+      "tile_size": 1024,
+      "tile_overlap": 128,
+      "class_name": "banana_plant"
+    },
+    "training": {
+      "base": "yolov8m.pt",
+      "imgsz": 1024,
+      "epochs": 80,
+      "method": "real-crop copy-paste composites (1200) + real train, label cleanup (+109 missed labels)",
+      "purpose": "reduce per-tile false positives and misses in dense mats"
+    }
+  },
+  "acceptance_report": {
+    "source": "held-out test (count-banana-plants, aerial UAV, per-plant labels)",
+    "dataset": "count-banana-plants (Roboflow Universe, CC-BY-4.0)",
+    "eval_method": "raw detector, imgsz=1024, conf=0.25, NMS iou=0.7, greedy IoU>=0.5 matching",
+    "metrics": {
+      "images": 50,
+      "truth_count": 1166,
+      "prediction_count": 1093,
+      "precision": 0.9039,
+      "recall": 0.8473,
+      "f1": 0.8747,
+      "map50": 0.9275,
+      "map50_95": 0.5384,
+      "count_error_rate": 0.0626
+    },
+    "progression_same_test_at_conf_0_25": {
+      "v3": {"precision": 0.8237, "recall": 0.7976, "f1": 0.8105},
+      "v4": {"precision": 0.8439, "recall": 0.8250, "f1": 0.8343},
+      "v5": {"precision": 0.9039, "recall": 0.8473, "f1": 0.8747}
+    },
+    "note": "Real improvement in per-object detection: fewer false positives (precision 0.82 -> 0.90) and fewer misses (recall 0.80 -> 0.85) vs v3, from real-crop copy-paste augmentation + label cleanup. Single farm/region; count operating point should be recalibrated per farm (real_data/calibrate_count.py)."
+  },
+  "benchmark_report": null,
+  "promotion": null,
+  "notes": "YOLOv8m trained with real-crop copy-paste composites + label cleanup on count-banana-plants (CC-BY-4.0). Best per-object detection of the v3/v4/v5 line on the held-out test.",
+  "manifest_sha256": null
+}

@@ -7,7 +7,7 @@ and the count error is measured on the held-out fold (out-of-fold).
 
 Usage:
     python real_data/calibrate_count.py \
-        --weights models/banana_real_v3.pt \
+        --weights models/banana_real_v5.pt \
         --data-root PATH/count_banana_plants \
         --out models/registry/real_v3_count_calibration.json
 

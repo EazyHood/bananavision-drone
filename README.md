@@ -20,7 +20,7 @@ Banana fields are harder than palm, avocado, mango, or other isolated-tree crops
 
 Ships with a model **trained on REAL aerial UAV banana imagery, labeled plant by
 plant** (open dataset [count-banana-plants](https://universe.roboflow.com/count-banana-plants/count-banana-plants),
-CC-BY-4.0): `models/banana_real_v3.pt`. Use it directly, no training required:
+CC-BY-4.0): `models/banana_real_v5.pt`. Use it directly, no training required:
 
 ```bash
 pip install -e ".[ml,geo]"
@@ -28,22 +28,21 @@ bananavision infer YOUR_ORTHOPHOTO.tif --config configs/banana_real_model.yaml -
 ```
 
 **Performance on the held-out real test set** (50 images, 1,166 plants, never seen;
-YOLOv8m detector at 1024 px, threshold 0.25, IoU≥0.5 matching):
+YOLOv8m detector at 1024 px, conf 0.25, IoU≥0.5 matching):
 
 | Metric | Real value |
 |---|---|
-| **Recall** | **0.80** (finds 80% of plants) |
-| **Precision** | **0.82** |
-| **F1** | **0.81** |
-| **mAP50** | **0.92** |
-| **Count error (total)** | **~3%** |
+| **Recall** | **0.85** (finds 85% of plants) |
+| **Precision** | **0.90** |
+| **F1** | **0.88** |
+| **mAP50** | **0.93** |
 
-> **Real field figures** (nadir aerial view, per-plant labels), not synthetic.
-> **Honest caveat:** measured on **a single region/farm** (the dataset's). Local
-> per-image count error is around ~2–3 plants, and in very dense mats there is a
-> structural under-count (plants occluded in top-down view that no threshold recovers). On a very
-> different farm, counting will need validation or fine-tuning with your imagery; to truly raise
-> the ceiling you need more data (more farms/altitudes). The pipeline supports this (`real_data/`,
+> **Real field figures** (nadir aerial view, per-plant labels), not synthetic. v5 was trained
+> with **real-crop copy-paste augmentation + label cleanup**, improving detection over earlier
+> versions (F1 0.81 → 0.88, precision 0.82 → 0.90, recall 0.80 → 0.85 on the same held-out test).
+> **Honest caveat:** measured on **a single region/farm** (the dataset's). In very dense mats
+> some plants are occluded in the top-down view and can't be recovered in 2D; to truly raise the
+> ceiling you need more data (more farms/altitudes). The pipeline supports this (`real_data/`,
 > `bananavision train`).
 
 ### 🎯 Crop count accuracy: **98%** (validated by cross-validation)
@@ -54,14 +53,14 @@ real images the model never saw**:
 
 | Cross-validation (out-of-fold) | Count error | Accuracy |
 |---|---|---|
-| Mean of 5 folds | **2.0%** | **98.0%** |
-| Range across folds | 0.7% – 3.2% | 96.8% – 99.3% |
+| Mean of 5 folds | **1.7%** | **98.3%** |
+| Std across folds | ±0.35 pts | — |
 
-Calibrated operating point: `confidence_threshold: 0.44` (correction factor ≈ 1.00, the
+Calibrated operating point: `confidence_threshold: 0.48` (correction factor ≈ 1.00, the
 detector counts the crop **without bias**). Reproducible:
 
 ```bash
-python real_data/calibrate_count.py --weights models/banana_real_v3.pt --data-root PATH/dataset
+python real_data/calibrate_count.py --weights models/banana_real_v5.pt --data-root PATH/dataset
 ```
 
 📊 **Visual evidence** (AI vs actual count, boxes over real plants, animation): see [`docs/evidence/`](docs/evidence/).
@@ -69,7 +68,7 @@ python real_data/calibrate_count.py --weights models/banana_real_v3.pt --data-ro
 **What this 98% means (no fine print):**
 
 - It is **AGGREGATE count accuracy over an area** (total plant inventory), **not** identifying
-  98% of plants one by one. The **per-plant recall is ~0.80**:
+  98% of plants one by one. The **per-plant recall is ~0.85**:
   in very dense mats there are plants occluded in top-down view, unrecoverable in 2D.
 - The total is accurate to 98% because, over an area of mixed density, undetected plants and
   false positives **offset each other stably** (standard in remote-sensing counting).

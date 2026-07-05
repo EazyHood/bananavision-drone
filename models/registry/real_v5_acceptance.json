@@ -1,0 +1,34 @@
+{
+  "source": "held-out test (count-banana-plants, aerial UAV, per-plant labels)",
+  "dataset": "count-banana-plants (Roboflow Universe, CC-BY-4.0)",
+  "eval_method": "raw detector, imgsz=1024, conf=0.25, NMS iou=0.7, greedy IoU>=0.5 matching",
+  "metrics": {
+    "images": 50,
+    "truth_count": 1166,
+    "prediction_count": 1093,
+    "precision": 0.9039,
+    "recall": 0.8473,
+    "f1": 0.8747,
+    "map50": 0.9275,
+    "map50_95": 0.5384,
+    "count_error_rate": 0.0626
+  },
+  "progression_same_test_at_conf_0_25": {
+    "v3": {
+      "precision": 0.8237,
+      "recall": 0.7976,
+      "f1": 0.8105
+    },
+    "v4": {
+      "precision": 0.8439,
+      "recall": 0.825,
+      "f1": 0.8343
+    },
+    "v5": {
+      "precision": 0.9039,
+      "recall": 0.8473,
+      "f1": 0.8747
+    }
+  },
+  "note": "Real improvement in per-object detection: fewer false positives (precision 0.82 -> 0.90) and fewer misses (recall 0.80 -> 0.85) vs v3, from real-crop copy-paste augmentation + label cleanup. Single farm/region; count operating point should be recalibrated per farm (real_data/calibrate_count.py)."
+}

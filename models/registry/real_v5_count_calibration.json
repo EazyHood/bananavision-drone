@@ -1,0 +1,11 @@
+{
+  "metric": "aggregate count accuracy (inventory) of the banana crop",
+  "method": "5-fold CV over 200 images the detector never saw (splits ['valid','test'])",
+  "weights": "banana_real_v5.pt",
+  "images_unseen": 200,
+  "count_error_oof_pct_mean": 1.72,
+  "count_error_oof_pct_std": 0.35,
+  "count_accuracy_pct": 98.28,
+  "operating_point": {"confidence_threshold": 0.48, "count_correction_k": 1.006},
+  "honesty_note": "AGGREGATE COUNT accuracy over an area, NOT per-plant recall (~0.85). The total is accurate through stable cancellation at mixed density; in a field of uniformly extreme density, recalibrate with local images. v5 improved both detection (F1 0.88) and calibrated count (98.3%) over v3."
+}
