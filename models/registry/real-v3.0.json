@@ -1,0 +1,54 @@
+{
+  "version": "real-v3.0",
+  "created_at": "2026-07-05T05:35:33+00:00",
+  "model_path": "models\\banana_real_v3.pt",
+  "model_sha256": "eaa75f7d3131a836c82e7ac825aa3c5b97d546923bce740f8699ff3a9f2b5bf7",
+  "supersedes": "real-v2.0",
+  "runtime": {
+    "bananavision_version": "1.0.0",
+    "config": {
+      "detector": "yolo-seg",
+      "model_path": "models\\banana_real_v3.pt",
+      "confidence_threshold": 0.25,
+      "iou_threshold": 0.45,
+      "tile_size": 1024,
+      "tile_overlap": 128,
+      "class_name": "banana_plant"
+    },
+    "training": {
+      "base": "yolov8m.pt",
+      "imgsz": 1024,
+      "epochs": 120,
+      "box": 8.0,
+      "copy_paste": 0.3,
+      "mixup": 0.1,
+      "close_mosaic": 25,
+      "purpose": "densidad/traslape de macollas"
+    }
+  },
+  "acceptance_report": {
+    "source": "held-out test (count-banana-plants, aerial UAV, per-plant labels)",
+    "dataset": "count-banana-plants (Roboflow Universe, CC-BY-4.0)",
+    "eval_method": "raw detector, imgsz=1024, conf=0.25, NMS iou=0.7, greedy IoU>=0.5 matching",
+    "metrics": {
+      "images": 50,
+      "truth_count": 1166,
+      "prediction_count": 1129,
+      "true_positives": 930,
+      "false_positives": 199,
+      "false_negatives": 236,
+      "precision": 0.8237,
+      "recall": 0.7976,
+      "f1": 0.8105,
+      "map50": 0.915,
+      "map50_95": 0.51,
+      "count_error": 37,
+      "count_error_rate": 0.0317
+    },
+    "note": "Cifras REALES sobre test aereo retenido con etiquetas por planta. Mejora real vs v2 (mismo metodo, conf 0.25): F1 0.726->0.811, precision 0.658->0.824, error de conteo 23%->3%; mAP50 detector 0.85->0.92. UNA finca/region; otra finca requiere validar/afinar."
+  },
+  "benchmark_report": null,
+  "promotion": null,
+  "notes": "YOLOv8m reentrenado para densidad/traslape de macollas (imgsz 1024, copy_paste 0.3, mixup 0.1, box loss 8.0, 120 epocas) sobre count-banana-plants (CC-BY-4.0). Supera a real-v2.0 en el test retenido con el mismo metodo de evaluacion.",
+  "manifest_sha256": null
+}

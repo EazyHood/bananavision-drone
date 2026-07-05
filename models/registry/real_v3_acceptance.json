@@ -1,0 +1,27 @@
+{
+  "source": "held-out test (count-banana-plants, aerial UAV, per-plant labels)",
+  "dataset": "count-banana-plants (Roboflow Universe, CC-BY-4.0)",
+  "eval_method": "raw detector, imgsz=1024, conf=0.25, NMS iou=0.7, greedy IoU>=0.5 matching",
+  "metrics": {
+    "images": 50,
+    "truth_count": 1166,
+    "prediction_count": 1129,
+    "true_positives": 930,
+    "false_positives": 199,
+    "false_negatives": 236,
+    "precision": 0.8237,
+    "recall": 0.7976,
+    "f1": 0.8105,
+    "map50": 0.915,
+    "map50_95": 0.51,
+    "count_error": 37,
+    "count_error_rate": 0.0317
+  },
+  "comparison_vs_v2_same_method": {
+    "v2@0.25": {"precision": 0.6576, "recall": 0.8105, "f1": 0.7261, "count_error_rate": 0.2324},
+    "v2@0.35": {"precision": 0.7803, "recall": 0.7616, "f1": 0.7708, "count_error_rate": 0.024},
+    "v3@0.25": {"precision": 0.8237, "recall": 0.7976, "f1": 0.8105, "count_error_rate": 0.0317},
+    "map50_detector": {"v2": 0.85, "v3": 0.915}
+  },
+  "note": "Cifras REALES sobre test aereo retenido con etiquetas por planta. Mejora real vs v2 con el MISMO metodo. UNA sola finca/region; otra finca requiere validar/afinar. La calibracion de conteo es sensible a la densidad del campo (sub-conteo estructural en macollas ocluidas)."
+}

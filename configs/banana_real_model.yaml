@@ -1,9 +1,10 @@
-# Perfil de inferencia con el MODELO REAL v2 (recomendado).
-# YOLOv8m entrenado sobre imágenes UAV aéreas reales de banano con etiquetas por planta.
-# Test retenido: recall 0.79, precisión 0.90, mAP50 0.90.
+# Perfil de inferencia con el MODELO REAL v3 (recomendado).
+# YOLOv8m reentrenado para densidad/traslape (imgsz 1024, copy_paste/mixup, box loss alta).
+# Test retenido (1024 px, conf 0.25, IoU>=0.5): recall 0.80, precisión 0.82, F1 0.81,
+# mAP50 0.92, error de conteo ~3%.
 detector: yolo-seg
-model_path: models/banana_real_v2.pt
-confidence_threshold: 0.35
+model_path: models/banana_real_v3.pt
+confidence_threshold: 0.25
 iou_threshold: 0.45
 gsd_cm: 2.0
 expected_crown_diameter_m: 2.4

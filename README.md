@@ -8,7 +8,7 @@ Banana fields are harder than palm, avocado, mango, or other isolated-tree crops
 
 Trae un modelo **entrenado sobre imágenes UAV aéreas REALES de banano, etiquetadas planta por
 planta** (dataset abierto [count-banana-plants](https://universe.roboflow.com/count-banana-plants/count-banana-plants),
-CC-BY-4.0): `models/banana_real_v2.pt`. Úsalo directamente, sin entrenar:
+CC-BY-4.0): `models/banana_real_v3.pt`. Úsalo directamente, sin entrenar:
 
 ```bash
 pip install -e ".[ml,geo]"
@@ -16,19 +16,23 @@ bananavision infer TU_ORTOFOTO.tif --config configs/banana_real_model.yaml -o re
 ```
 
 **Rendimiento sobre el test real retenido** (50 imágenes, 1 166 plantas, nunca vistas;
-registrado en `models/registry/`):
+detector YOLOv8m a 1024 px, umbral 0.25, emparejamiento IoU≥0.5):
 
 | Métrica | Valor real |
 |---|---|
-| **Recall** | **0.79** (encuentra el 79 % de las plantas) |
-| **Precisión** | **0.90** |
-| **mAP50** | **0.90** |
-| Error de conteo agregado | ~12 % (sub-conteo) |
+| **Recall** | **0.80** (encuentra el 80 % de las plantas) |
+| **Precisión** | **0.82** |
+| **F1** | **0.81** |
+| **mAP50** | **0.92** |
+| **Error de conteo (total)** | **~3 %** |
 
-> Cifras **reales de campo** (vista aérea nadir, etiquetas por planta), no de datos sintéticos.
-> Es un detector de banano genuinamente bueno. **Ojo honesto:** está medido sobre **una
-> región/finca** (la del dataset); una finca muy distinta seguiría necesitando validación o un
-> afinado rápido con tus imágenes — el pipeline lo soporta (`real_data/`, `bananavision train`).
+> Cifras **reales de campo** (vista aérea nadir, etiquetas por planta), no sintéticas.
+> **Ojo honesto:** está medido sobre **una sola región/finca** (la del dataset). El error de
+> conteo local por imagen ronda ~2–3 plantas, y en macollas muy densas hay un sub-conteo
+> estructural (plantas ocluidas en vista cenital que ningún umbral recupera). En una finca muy
+> distinta el conteo necesitará validación o un afinado con tus imágenes; para subir el techo de
+> verdad hace falta más datos (más fincas/alturas). El pipeline lo soporta (`real_data/`,
+> `bananavision train`).
 
 ## What is included
 
