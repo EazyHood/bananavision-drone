@@ -1,51 +1,51 @@
-# Datos reales y entrenamiento del modelo de banano
+# Real data and banana model training
 
-Este directorio contiene el flujo para (re)entrenar el modelo con **imágenes UAV reales**.
-El modelo incluido (`models/banana_real_v1.pt`) se entrenó con este proceso.
+This directory contains the workflow to (re)train the model with **real UAV imagery**.
+The included model (`models/banana_real_v1.pt`) was trained with this process.
 
-## Dataset real usado
+## Real dataset used
 
-**DS-v1 de AI-BananaMapping** — imágenes UAV RGB reales (nadir, baja altitud) de cultivos de
-banano, tileadas a 1024 px, con anotaciones YOLO por planta.
-- Fuente: Zenodo [record 20945958](https://zenodo.org/records/20945958), **licencia CC-BY-4.0**.
-- ~14 180 train / 4 645 val / 4 611 test. Clase única: banano.
+**AI-BananaMapping DS-v1** — real RGB UAV imagery (nadir, low altitude) of banana
+crops, tiled to 1024 px, with per-plant YOLO annotations.
+- Source: Zenodo [record 20945958](https://zenodo.org/records/20945958), **CC-BY-4.0 license**.
+- ~14,180 train / 4,645 val / 4,611 test. Single class: banana.
 
-### Descargar y preparar
+### Download and prepare
 
 ```bash
-# 1. Descargar (9.8 GB, sin login)
+# 1. Download (9.8 GB, no login)
 curl -L -o ds-v1.rar "https://zenodo.org/api/records/20945958/files/ds-v1.rar/content"
-7z x ds-v1.rar          # necesita 7-Zip / unrar
+7z x ds-v1.rar          # requires 7-Zip / unrar
 
-# 2. (opcional) colapsar clases a "banano" si tu dataset trae varias clases de enfermedad
-python real_data/prepare_real_dataset.py --root DS-v1/ds-v1 --out DS-v1/banano_yolo
+# 2. (optional) collapse classes to "banana" if your dataset has multiple disease classes
+python real_data/prepare_real_dataset.py --root DS-v1/ds-v1 --out DS-v1/banana_yolo
 ```
 
-El `data.yaml` debe apuntar (ruta absoluta) a `images/{train,val,test}` con `names: [banano]`.
+The `data.yaml` must point (absolute path) to `images/{train,val,test}` with `names: [banana]`.
 
-## Entrenar
+## Train
 
 ```bash
 pip install -e ".[ml]"
-# YOLOv8 detección desde pesos COCO, sobre las imágenes reales:
-yolo detect train model=yolov8s.pt data=DS-v1/ds-v1/banano_real.yaml epochs=25 imgsz=640 batch=24
+# YOLOv8 detection from COCO weights, on the real imagery:
+yolo detect train model=yolov8s.pt data=DS-v1/ds-v1/banana_real.yaml epochs=25 imgsz=640 batch=24
 ```
 
-> ⚠️ **En Windows**, entrena desde un archivo `.py` o el CLI `yolo` (NO `python - <<PY`
-> por stdin) o el multiprocessing del DataLoader falla con `OSError: '<stdin>'`.
+> ⚠️ **On Windows**, train from a `.py` file or the `yolo` CLI (NOT `python - <<PY`
+> via stdin) or the DataLoader multiprocessing fails with `OSError: '<stdin>'`.
 
-## Evaluar sobre el test real y registrar
+## Evaluate on the real test set and register
 
 ```bash
 python real_data/eval_real.py --weights runs/detect/train/weights/best.pt \
-    --data DS-v1/ds-v1/banano_real.yaml --out real_eval
+    --data DS-v1/ds-v1/banana_real.yaml --out real_eval
 bananavision register-model runs/detect/train/weights/best.pt "real-v1.1" \
     --config configs/banana_real_model.yaml --acceptance-report real_eval/real_test_metrics.json
 ```
 
-## Escala y afinado
+## Scale and fine-tuning
 
-El dataset es de **baja altitud (escala de planta)**. Para ortomosaicos de gran altura,
-recorta tiles a tu GSD y **afina** (`resume`/transfer learning) con unas imágenes de tu
-finca. El framework incluye split *group-aware* (sin fuga finca/bloque/vuelo),
-`bananavision audit-dataset`, calibración y colas de *active learning* para acelerarlo.
+The dataset is **low altitude (plant scale)**. For high-altitude orthomosaics,
+crop tiles to your GSD and **fine-tune** (`resume`/transfer learning) with a few images from
+your farm. The framework includes a *group-aware* split (no farm/block/flight leakage),
+`bananavision audit-dataset`, calibration, and *active learning* queues to speed it up.

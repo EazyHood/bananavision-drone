@@ -1,9 +1,9 @@
-"""Combina varios datasets YOLO reales de banano con split GROUP-AWARE (sin fuga).
+"""Combine several real YOLO banana datasets with a GROUP-AWARE split (no leakage).
 
-Los tiles se nombran como <imagen_fuente>_rN_cM.jpg. Si tiles de una misma imagen
-fuente caen en train Y en test, el recall sale inflado (fuga). Este script agrupa por
-imagen fuente y reparte GRUPOS COMPLETOS a train/val/test, de modo que ninguna imagen
-fuente cruza splits — aunque venga de varios datasets (DS-v1, DS-v2, ...).
+Tiles are named <source_image>_rN_cM.jpg. If tiles from the same source image land in
+train AND test, recall comes out inflated (leakage). This script groups by source image
+and assigns WHOLE GROUPS to train/val/test, so no source image crosses splits — even when
+it comes from several datasets (DS-v1, DS-v2, ...).
 
     python real_data/combine_real_datasets.py \
         --src DS-v1/ds-v1 DS-v2/ds-v2 --out combined --val 0.1 --test 0.1
@@ -21,13 +21,13 @@ TILE_RE = re.compile(r"^(.*?)(?:_r\d+_c\d+)?$")
 
 
 def source_group(stem: str) -> str:
-    """Prefijo de la imagen fuente: quita el sufijo _rN_cM del nombre del tile."""
+    """Source-image prefix: strips the _rN_cM suffix from the tile name."""
     m = TILE_RE.match(stem)
     return m.group(1) if m else stem
 
 
 def _bucket(group: str, val: float, test: float) -> str:
-    """Asignacion determinista y estable de un grupo a train/val/test por hash."""
+    """Deterministic, stable assignment of a group to train/val/test by hash."""
     h = int(hashlib.sha1(group.encode()).hexdigest(), 16) % 10_000 / 10_000.0
     if h < test:
         return "test"
@@ -37,7 +37,7 @@ def _bucket(group: str, val: float, test: float) -> str:
 
 
 def collect(src_roots):
-    """Recorre las particiones existentes y junta (img_path, lbl_path, stem)."""
+    """Walk the existing splits and gather (img_path, lbl_path, stem)."""
     items = []
     for root in src_roots:
         for split in ("train", "val", "valid", "test"):
@@ -56,18 +56,18 @@ def collect(src_roots):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--src", nargs="+", required=True, help="Raices de datasets YOLO")
+    ap.add_argument("--src", nargs="+", required=True, help="YOLO dataset roots")
     ap.add_argument("--out", required=True)
     ap.add_argument("--val", type=float, default=0.1)
     ap.add_argument("--test", type=float, default=0.1)
-    ap.add_argument("--class-name", default="banano")
+    ap.add_argument("--class-name", default="banana")
     args = ap.parse_args()
 
     items = collect(args.src)
     if not items:
-        raise SystemExit("No se encontraron imagenes en las raices dadas.")
+        raise SystemExit("No images found in the given roots.")
 
-    # dedup por stem (misma tesela en v1 y v2 -> una sola)
+    # dedup by stem (same tile in v1 and v2 -> only one)
     seen = {}
     for img, lbl, stem, ext in items:
         seen.setdefault(stem, (img, lbl, ext))
@@ -85,7 +85,7 @@ def main():
         shutil.copy2(img, os.path.join(args.out, "images", split, stem + ext))
         dst_lbl = os.path.join(args.out, "labels", split, stem + ".txt")
         if os.path.exists(lbl):
-            # colapsa todas las clases a 0 = banano
+            # collapse all classes to 0 = banana
             lines = []
             with open(lbl, encoding="utf-8") as fh:
                 for line in fh:
@@ -99,15 +99,15 @@ def main():
             open(dst_lbl, "w").close()
         counts[split] += 1
 
-    yaml_path = os.path.join(args.out, "banano_combined.yaml")
+    yaml_path = os.path.join(args.out, "combined.yaml")
     with open(yaml_path, "w", encoding="utf-8") as fh:
         fh.write(
             f"path: {os.path.abspath(args.out)}\n"
             "train: images/train\nval: images/val\ntest: images/test\n\n"
             f"nc: 1\nnames: ['{args.class_name}']\n"
         )
-    print(f"Combinado: {sum(counts.values())} tiles unicos de {len(groups)} imagenes fuente")
-    print(f"  train={counts['train']} val={counts['val']} test={counts['test']} (group-aware, sin fuga)")
+    print(f"Combined: {sum(counts.values())} unique tiles from {len(groups)} source images")
+    print(f"  train={counts['train']} val={counts['val']} test={counts['test']} (group-aware, no leakage)")
     print(f"  data.yaml: {yaml_path}")
 
 

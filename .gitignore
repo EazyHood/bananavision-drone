@@ -19,7 +19,7 @@ datasets/
 .env
 .DS_Store
 
-# incluir el modelo real entrenado (activo del producto)
+# include the real trained model (product asset)
 !models/*.pt
 realdata/
 real_eval/

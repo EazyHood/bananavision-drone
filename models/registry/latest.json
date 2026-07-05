@@ -23,7 +23,7 @@
       "copy_paste": 0.3,
       "mixup": 0.1,
       "close_mosaic": 25,
-      "purpose": "densidad/traslape de macollas"
+      "purpose": "density/overlap of plant clumps"
     }
   },
   "acceptance_report": {
@@ -45,10 +45,10 @@
       "count_error": 37,
       "count_error_rate": 0.0317
     },
-    "note": "Cifras REALES sobre test aereo retenido con etiquetas por planta. Mejora real vs v2 (mismo metodo, conf 0.25): F1 0.726->0.811, precision 0.658->0.824, error de conteo 23%->3%; mAP50 detector 0.85->0.92. UNA finca/region; otra finca requiere validar/afinar."
+    "note": "REAL figures on held-out aerial test with per-plant labels. Real improvement vs v2 (same method, conf 0.25): F1 0.726->0.811, precision 0.658->0.824, count error 23%->3%; detector mAP50 0.85->0.92. ONE farm/region; another farm requires validation/tuning."
   },
   "benchmark_report": null,
   "promotion": null,
-  "notes": "YOLOv8m reentrenado para densidad/traslape de macollas (imgsz 1024, copy_paste 0.3, mixup 0.1, box loss 8.0, 120 epocas) sobre count-banana-plants (CC-BY-4.0). Supera a real-v2.0 en el test retenido con el mismo metodo de evaluacion.",
+  "notes": "YOLOv8m retrained for density/overlap of plant clumps (imgsz 1024, copy_paste 0.3, mixup 0.1, box loss 8.0, 120 epochs) on count-banana-plants (CC-BY-4.0). Outperforms real-v2.0 on the held-out test using the same evaluation method.",
   "manifest_sha256": null
 }

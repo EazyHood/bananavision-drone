@@ -1,6 +1,6 @@
 {
-  "metric": "acierto de conteo agregado (inventario) del cultivo de banano",
-  "method": "5-fold CV sobre 200 imagenes que el detector nunca vio (splits ['valid', 'test'])",
+  "metric": "aggregate count accuracy (inventory) of the banana crop",
+  "method": "5-fold CV over 200 images the detector never saw (splits ['valid', 'test'])",
   "weights": "banana_real_v3.pt",
   "images_unseen": 200,
   "gt_total": 3132,
@@ -53,5 +53,5 @@
     "confidence_threshold": 0.44,
     "count_correction_k": 1.001
   },
-  "honesty_note": "Acierto de CONTEO AGREGADO sobre area, NO recall por planta (~0.80). El total acierta por compensacion estable en densidad mixta; en campo de densidad uniformemente extrema, recalibrar con imagenes locales."
+  "honesty_note": "AGGREGATE COUNT accuracy over area, NOT per-plant recall (~0.80). The total is correct due to stable compensation in mixed density; in fields of uniformly extreme density, recalibrate with local images."
 }

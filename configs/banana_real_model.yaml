@@ -1,9 +1,9 @@
-# Perfil de inferencia con el MODELO REAL v3 (recomendado).
-# YOLOv8m reentrenado para densidad/traslape (imgsz 1024, copy_paste/mixup, box loss alta).
-# CONTEO CALIBRADO: conf 0.44 -> acierto de conteo agregado ~98% (error 2.0%), validado con
-# validacion cruzada de 5 folds sobre 200 imagenes NO vistas.
-# Ver models/registry/real_v3_count_calibration.json (reproducible: real_data/calibrate_count.py).
-# Deteccion por planta (referencia, a conf 0.25): recall 0.80 / precision 0.82 / F1 0.81 / mAP50 0.92.
+# Inference profile with the REAL MODEL v3 (recommended).
+# YOLOv8m retrained for density/overlap (imgsz 1024, copy_paste/mixup, high box loss).
+# CALIBRATED COUNT: conf 0.44 -> aggregate count accuracy ~98% (error 2.0%), validated with
+# 5-fold cross-validation over 200 UNSEEN images.
+# See models/registry/real_v3_count_calibration.json (reproducible: real_data/calibrate_count.py).
+# Per-plant detection (reference, at conf 0.25): recall 0.80 / precision 0.82 / F1 0.81 / mAP50 0.92.
 detector: yolo-seg
 model_path: models/banana_real_v3.pt
 confidence_threshold: 0.44

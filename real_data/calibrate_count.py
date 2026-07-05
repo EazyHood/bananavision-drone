@@ -1,24 +1,24 @@
-"""Calibracion HONESTA del conteo de banano + validacion cruzada.
+"""HONEST banana count calibration + cross-validation.
 
-Mide el ACIERTO DE CONTEO AGREGADO (inventario total del cultivo) del detector real
-sobre imagenes que el modelo NUNCA vio (splits valid+test), con validacion cruzada de
-K folds: en cada fold se fija el umbral de confianza y un factor de correccion usando
-los folds de ajuste, y se mide el error de conteo en el fold retenido (out-of-fold).
+Measures the AGGREGATE COUNT ACCURACY (total crop inventory) of the real detector on
+images the model NEVER saw (valid+test splits), using K-fold cross-validation: in each
+fold, the confidence threshold and a correction factor are fixed using the fitting folds,
+and the count error is measured on the held-out fold (out-of-fold).
 
-Uso:
+Usage:
     python real_data/calibrate_count.py \
         --weights models/banana_real_v3.pt \
-        --data-root RUTA/count_banana_plants \
+        --data-root PATH/count_banana_plants \
         --out models/registry/real_v3_count_calibration.json
 
-Reporta:
-  - error de conteo OOF por fold y su media (acierto = 100 - error)
-  - el punto de operacion global (conf, factor k) para produccion
+Reports:
+  - OOF count error per fold and its mean (accuracy = 100 - error)
+  - the global operating point (conf, factor k) for production
 
-Nota honesta: es acierto de CONTEO AGREGADO sobre un area, NO recall por planta
-individual (que es ~0.80: en macollas densas hay plantas ocluidas en nadir). El total
-acierta porque, sobre un area de densidad mixta, no-detecciones y falsos positivos se
-compensan de forma estable. En un campo de densidad uniformemente extrema, recalibrar.
+Honest note: this is AGGREGATE COUNT accuracy over an area, NOT per-plant recall
+(which is ~0.80: in dense clusters some plants are occluded at nadir). The total is
+accurate because, over an area of mixed density, misses and false positives cancel out
+stably. In a field of uniformly extreme density, recalibrate.
 """
 from __future__ import annotations
 
@@ -65,7 +65,7 @@ def fit(items):
             continue
         k = gt.sum() / rc.sum()
         err = abs((rc * k).sum() - gt.sum()) / gt.sum()
-        score = err + 0.001 * abs(k - 1)   # ante empates, preferir menos correccion
+        score = err + 0.001 * abs(k - 1)   # on ties, prefer less correction
         if score < best[0]:
             best = (score, c, k)
     return best[1], best[2]
@@ -81,7 +81,7 @@ def agg_err(items, c, k):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--weights", required=True)
-    ap.add_argument("--data-root", required=True, help="carpeta con {valid,test}/{images,labels}")
+    ap.add_argument("--data-root", required=True, help="folder with {valid,test}/{images,labels}")
     ap.add_argument("--splits", nargs="+", default=["valid", "test"])
     ap.add_argument("--imgsz", type=int, default=1024)
     ap.add_argument("--folds", type=int, default=5)
@@ -97,12 +97,12 @@ def main():
         items += collect(root, s, model, args.imgsz)
     n = len(items)
     gt_total = int(sum(g for g, _ in items))
-    print(f"imgs nunca vistas={n}  gt total={gt_total}")
+    print(f"unseen imgs={n}  gt total={gt_total}")
 
     K = args.folds
     folds = [[items[i] for i in range(n) if i % K == f] for f in range(K)]
     per_fold = []
-    print("\nfold | n | conf* | k* | error_conteo_OOF% | MAE")
+    print("\nfold | n | conf* | k* | count_error_OOF% | MAE")
     for f in range(K):
         held = folds[f]
         train = [it for g in range(K) if g != f for it in folds[g]]
@@ -115,12 +115,12 @@ def main():
     errs = [p["count_error_pct"] for p in per_fold]
     mean_e, std_e = float(np.mean(errs)), float(np.std(errs))
     c, k = fit(items)
-    print(f"\n== ERROR DE CONTEO OOF = {mean_e:.2f}% (std {std_e:.2f}) -> ACIERTO {100-mean_e:.2f}% ==")
-    print(f"Punto de operacion produccion: conf={c}  factor_correccion={k:.4f}")
+    print(f"\n== OOF COUNT ERROR = {mean_e:.2f}% (std {std_e:.2f}) -> ACCURACY {100-mean_e:.2f}% ==")
+    print(f"Production operating point: conf={c}  correction_factor={k:.4f}")
 
     report = {
-        "metric": "acierto de conteo agregado (inventario) del cultivo de banano",
-        "method": f"{K}-fold CV sobre {n} imagenes que el detector nunca vio (splits {args.splits})",
+        "metric": "aggregate count accuracy (inventory) of the banana crop",
+        "method": f"{K}-fold CV over {n} images the detector never saw (splits {args.splits})",
         "weights": Path(args.weights).name,
         "images_unseen": n,
         "gt_total": gt_total,
@@ -129,13 +129,13 @@ def main():
         "count_error_oof_pct_std": round(std_e, 3),
         "count_accuracy_pct": round(100 - mean_e, 2),
         "operating_point": {"confidence_threshold": c, "count_correction_k": round(k, 4)},
-        "honesty_note": ("Acierto de CONTEO AGREGADO sobre area, NO recall por planta (~0.80). "
-                          "El total acierta por compensacion estable en densidad mixta; en campo "
-                          "de densidad uniformemente extrema, recalibrar con imagenes locales."),
+        "honesty_note": ("AGGREGATE COUNT accuracy over area, NOT per-plant recall (~0.80). "
+                          "The total is accurate through stable cancellation at mixed density; in a "
+                          "field of uniformly extreme density, recalibrate with local images."),
     }
     if args.out:
         Path(args.out).write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
-        print(f"\nReporte -> {args.out}")
+        print(f"\nReport -> {args.out}")
 
 
 if __name__ == "__main__":

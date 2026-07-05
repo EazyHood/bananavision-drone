@@ -2,67 +2,79 @@
 
 Open-source banana plant detection, instance splitting, counting, and geospatial export for UAV imagery.
 
+## Proof it works
+
+Counting on **200 real UAV images the model never saw**: **3,132 actual plants vs 3,129 counted — 98% count accuracy** (5-fold cross-validation).
+
+![AI count vs actual count](docs/evidence/scatter_count.png)
+
+Detections land on real banana crowns, from sparse to very dense tiles:
+
+![Banana detection](docs/evidence/detection_banana.gif)
+
+Full evidence and honest caveats: [`docs/evidence/`](docs/evidence/).
+
 Banana fields are harder than palm, avocado, mango, or other isolated-tree crops because one visible banana mat can contain several suckers/pseudostems and overlapping leaves. BananaVision treats this as an instance-separation problem, not just a box-detection problem.
 
-## 🎯 Incluye un modelo entrenado con imágenes UAV REALES (listo para usar)
+## 🎯 Includes a model trained on REAL UAV imagery (ready to use)
 
-Trae un modelo **entrenado sobre imágenes UAV aéreas REALES de banano, etiquetadas planta por
-planta** (dataset abierto [count-banana-plants](https://universe.roboflow.com/count-banana-plants/count-banana-plants),
-CC-BY-4.0): `models/banana_real_v3.pt`. Úsalo directamente, sin entrenar:
+Ships with a model **trained on REAL aerial UAV banana imagery, labeled plant by
+plant** (open dataset [count-banana-plants](https://universe.roboflow.com/count-banana-plants/count-banana-plants),
+CC-BY-4.0): `models/banana_real_v3.pt`. Use it directly, no training required:
 
 ```bash
 pip install -e ".[ml,geo]"
-bananavision infer TU_ORTOFOTO.tif --config configs/banana_real_model.yaml -o resultados
+bananavision infer YOUR_ORTHOPHOTO.tif --config configs/banana_real_model.yaml -o results
 ```
 
-**Rendimiento sobre el test real retenido** (50 imágenes, 1 166 plantas, nunca vistas;
-detector YOLOv8m a 1024 px, umbral 0.25, emparejamiento IoU≥0.5):
+**Performance on the held-out real test set** (50 images, 1,166 plants, never seen;
+YOLOv8m detector at 1024 px, threshold 0.25, IoU≥0.5 matching):
 
-| Métrica | Valor real |
+| Metric | Real value |
 |---|---|
-| **Recall** | **0.80** (encuentra el 80 % de las plantas) |
-| **Precisión** | **0.82** |
+| **Recall** | **0.80** (finds 80% of plants) |
+| **Precision** | **0.82** |
 | **F1** | **0.81** |
 | **mAP50** | **0.92** |
-| **Error de conteo (total)** | **~3 %** |
+| **Count error (total)** | **~3%** |
 
-> Cifras **reales de campo** (vista aérea nadir, etiquetas por planta), no sintéticas.
-> **Ojo honesto:** está medido sobre **una sola región/finca** (la del dataset). El error de
-> conteo local por imagen ronda ~2–3 plantas, y en macollas muy densas hay un sub-conteo
-> estructural (plantas ocluidas en vista cenital que ningún umbral recupera). En una finca muy
-> distinta el conteo necesitará validación o un afinado con tus imágenes; para subir el techo de
-> verdad hace falta más datos (más fincas/alturas). El pipeline lo soporta (`real_data/`,
+> **Real field figures** (nadir aerial view, per-plant labels), not synthetic.
+> **Honest caveat:** measured on **a single region/farm** (the dataset's). Local
+> per-image count error is around ~2–3 plants, and in very dense mats there is a
+> structural under-count (plants occluded in top-down view that no threshold recovers). On a very
+> different farm, counting will need validation or fine-tuning with your imagery; to truly raise
+> the ceiling you need more data (more farms/altitudes). The pipeline supports this (`real_data/`,
 > `bananavision train`).
 
-### 🎯 Precisión de conteo del cultivo: **98%** (validada por validación cruzada)
+### 🎯 Crop count accuracy: **98%** (validated by cross-validation)
 
-Para el **conteo total del cultivo** —el número que le importa a una finca para su inventario—
-el sistema alcanza **~98% de acierto**, validado con **validación cruzada de 5 folds sobre 200
-imágenes reales que el modelo nunca vio**:
+For the **total crop count** —the number a farm cares about for its inventory—
+the system reaches **~98% accuracy**, validated with **5-fold cross-validation over 200
+real images the model never saw**:
 
-| Validación cruzada (out-of-fold) | Error de conteo | Acierto |
+| Cross-validation (out-of-fold) | Count error | Accuracy |
 |---|---|---|
-| Media de 5 folds | **2.0%** | **98.0%** |
-| Rango entre folds | 0.7 % – 3.2 % | 96.8 % – 99.3 % |
+| Mean of 5 folds | **2.0%** | **98.0%** |
+| Range across folds | 0.7% – 3.2% | 96.8% – 99.3% |
 
-Punto de operación calibrado: `confidence_threshold: 0.44` (factor de corrección ≈ 1.00, el
-detector cuenta el cultivo **sin sesgo**). Reproducible:
+Calibrated operating point: `confidence_threshold: 0.44` (correction factor ≈ 1.00, the
+detector counts the crop **without bias**). Reproducible:
 
 ```bash
-python real_data/calibrate_count.py --weights models/banana_real_v3.pt --data-root RUTA/dataset
+python real_data/calibrate_count.py --weights models/banana_real_v3.pt --data-root PATH/dataset
 ```
 
-📊 **Pruebas visuales** (conteo IA vs real, cajas sobre plantas reales, animación): ver [`docs/evidencia/`](docs/evidencia/).
+📊 **Visual evidence** (AI vs actual count, boxes over real plants, animation): see [`docs/evidence/`](docs/evidence/).
 
-**Qué significa este 98% (sin letra pequeña):**
+**What this 98% means (no fine print):**
 
-- Es acierto de **conteo AGREGADO sobre un área** (inventario total de plantas), **no** que
-  identifique el 98 % de las plantas una a una. El **recall por planta individual es ~0.80**:
-  en macollas muy densas hay plantas ocluidas en vista cenital, irrecuperables en 2D.
-- El total acierta al 98 % porque, sobre un área de densidad mixta, las plantas no detectadas y
-  los falsos positivos se **compensan de forma estable** (estándar en conteo por teledetección).
-- Vale para campos de **densidad mixta** como esta región. En un campo de densidad uniformemente
-  extrema, **recalibra** con unas imágenes locales (mismo script, minutos).
+- It is **AGGREGATE count accuracy over an area** (total plant inventory), **not** identifying
+  98% of plants one by one. The **per-plant recall is ~0.80**:
+  in very dense mats there are plants occluded in top-down view, unrecoverable in 2D.
+- The total is accurate to 98% because, over an area of mixed density, undetected plants and
+  false positives **offset each other stably** (standard in remote-sensing counting).
+- Valid for **mixed-density** fields like this region. In a uniformly extreme-density
+  field, **recalibrate** with a few local images (same script, minutes).
 
 ## What is included
 
@@ -985,13 +997,13 @@ The design follows published banana-UAV findings: RGB image variants and altitud
 
 See [docs/REFERENCES.md](docs/REFERENCES.md).
 
-## Autor y licencia
+## Author and license
 
-**Autor y titular único de todos los derechos: Jhonatan del Rio Mejia.** Copyright © 2026 Jhonatan del Rio Mejia.
+**Author and sole holder of all rights: Jhonatan del Rio Mejia.** Copyright © 2026 Jhonatan del Rio Mejia.
 
-**Licencia propietaria — Todos los derechos reservados.** Se **PROHÍBE su venta**,
-reventa, sublicenciamiento o cualquier explotación comercial, total o parcial, sin
-permiso expreso y por escrito del autor. Se permite el uso personal, educativo, de
-investigación y de evaluación conservando este aviso. Ver [LICENSE](LICENSE).
+**Proprietary license — All rights reserved.** **Sale**, resale, sublicensing, or any
+commercial exploitation, in whole or in part, is **PROHIBITED** without the author's
+express written permission. Personal, educational, research, and evaluation use is
+permitted provided this notice is retained. See [LICENSE](LICENSE).
 
-El modelo incluido se entrenó con datos bajo CC-BY-4.0 (atribución en [NOTICE](NOTICE)).
+The included model was trained on data under CC-BY-4.0 (attribution in [NOTICE](NOTICE)).

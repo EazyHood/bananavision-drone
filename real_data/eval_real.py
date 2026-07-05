@@ -1,11 +1,11 @@
-"""Evaluacion HONESTA del modelo real sobre el split de TEST real retenido.
+"""Honest evaluation of the real model on the held-out real TEST split.
 
-Mide precision/recall/mAP del detector de banano sobre imagenes UAV REALES que el
-modelo NUNCA vio (split test), y guarda ejemplos visuales de deteccion sobre tiles
-reales. Estas son las cifras defendibles de rendimiento en campo.
+Measures precision/recall/mAP of the banana detector on REAL UAV images the model
+NEVER saw (test split), and saves visual detection examples on real tiles. These are
+the defensible field-performance figures.
 
-    python deep/eval_real.py --weights models/banano_real_v1.pt \
-        --data realdata/DS-v1/ds-v1/banano_real.yaml --out real_eval
+    python deep/eval_real.py --weights models/banana_real_v1.pt \
+        --data realdata/DS-v1/ds-v1/banana_real.yaml --out real_eval
 """
 from __future__ import annotations
 
@@ -29,16 +29,16 @@ def main():
     try:
         from ultralytics import YOLO
     except ImportError as e:
-        raise SystemExit("Falta ultralytics. pip install -e .[deep]") from e
+        raise SystemExit("ultralytics is missing. pip install -e .[deep]") from e
 
     os.makedirs(args.out, exist_ok=True)
     model = YOLO(args.weights)
 
-    # 1. metricas sobre el split de TEST real (imagenes nunca vistas)
+    # 1. metrics on the real TEST split (images never seen)
     metrics = model.val(data=args.data, split="test", imgsz=args.imgsz, verbose=False)
     box = metrics.box
     report = {
-        "split": "test (real, retenido)",
+        "split": "test (real, held-out)",
         "mAP50": round(float(box.map50), 4),
         "mAP50_95": round(float(box.map), 4),
         "precision": round(float(box.mp), 4),
@@ -49,7 +49,7 @@ def main():
         json.dump(report, fh, indent=2, ensure_ascii=False)
     print(json.dumps(report, indent=2, ensure_ascii=False))
 
-    # 2. ejemplos visuales de deteccion sobre tiles reales de test
+    # 2. visual detection examples on real test tiles
     root = None
     with open(args.data, encoding="utf-8") as fh:
         for line in fh:
@@ -63,9 +63,9 @@ def main():
         if sample:
             model.predict(sample, conf=args.conf, imgsz=args.imgsz, save=True,
                           project=args.out, name="ejemplos_reales", exist_ok=True, verbose=False)
-            print(f"\nEjemplos visuales sobre tiles REALES en: {args.out}/ejemplos_reales")
+            print(f"\nVisual examples on REAL tiles at: {args.out}/ejemplos_reales")
 
-    print(f"\nMetricas: {args.out}/real_test_metrics.json")
+    print(f"\nMetrics: {args.out}/real_test_metrics.json")
 
 
 if __name__ == "__main__":

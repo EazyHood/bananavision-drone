@@ -1,13 +1,13 @@
-"""Genera un dataset sintetico de banano en formato YOLOv8-seg.
+"""Generate a synthetic banana dataset in YOLOv8-seg format.
 
-Cada macolla se convierte en un poligono de instancia (clase 0 = macolla). Sirve
-para entrenar el modelo de deep learning de punta a punta y para el benchmark.
+Each mat becomes an instance polygon (class 0 = mat). Used to train the deep
+learning model end to end and for the benchmark.
 
     python deep/make_synth_dataset.py --out dataset --train 160 --val 40 --size 640
 
-NOTA: es un dataset SINTETICO. El modelo entrenado sobre el demuestra el pipeline
-completo (datos -> entrenamiento -> inferencia) y sirve de linea base reproducible,
-pero para campo real hay que reetiquetar con imagenes reales (ver README / docs).
+NOTE: this is a SYNTHETIC dataset. The model trained on it demonstrates the full
+pipeline (data -> training -> inference) and serves as a reproducible baseline,
+but for real field use it must be relabeled with real images (see README / docs).
 """
 from __future__ import annotations
 
@@ -25,22 +25,22 @@ from banano.synth import synth_plantation_labeled  # noqa: E402
 
 
 def mask_to_polygon(mask, tol=1.5):
-    """Convierte la mascara de instancia de UNA macolla en un poligono (fila, col).
+    """Convert the instance mask of ONE mat into a polygon (row, col).
 
-    Una macolla puede tener varios pseudotallos (hijuelos) cuyas rosetas quedan
-    espacialmente separadas -> la mascara puede ser DESCONECTADA. Se toma el CASCO
-    CONVEXO de toda la instancia para que el poligono cubra el cluster completo
-    (definicion agronomica de macolla) y no queden rosetas sin etiquetar (lo que
-    generaria falsos positivos al entrenar).
+    A mat can have several pseudostems (suckers) whose rosettes end up
+    spatially separated -> the mask may be DISCONNECTED. The CONVEX HULL of the
+    whole instance is taken so the polygon covers the full cluster (agronomic
+    definition of a mat) and no rosettes are left unlabeled (which would produce
+    false positives during training).
     """
-    if mask.sum() < 25:  # demasiado pequena
+    if mask.sum() < 25:  # too small
         return None
     hull = morphology.convex_hull_image(mask)
     padded = np.pad(hull.astype(float), 1)
     contours = measure.find_contours(padded, 0.5)
     if not contours:
         return None
-    c = max(contours, key=len) - 1.0  # deshace el pad
+    c = max(contours, key=len) - 1.0  # undo the pad
     c = measure.approximate_polygon(c, tolerance=tol)
     if len(c) < 3:
         return None
@@ -100,9 +100,9 @@ def build(out, n_train, n_val, size, gsd):
             f"path: {os.path.abspath(out)}\n"
             "train: images/train\n"
             "val: images/val\n\n"
-            "names:\n  0: macolla\n"
+            "names:\n  0: mat\n"
         )
-    print(f"Dataset listo en '{out}': {n_train}+{n_val} tiles, ~{total_inst} instancias")
+    print(f"Dataset ready in '{out}': {n_train}+{n_val} tiles, ~{total_inst} instances")
     print(f"data.yaml: {yaml_path}")
     return yaml_path
 

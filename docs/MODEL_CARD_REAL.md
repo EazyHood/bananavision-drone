@@ -61,4 +61,4 @@ Banana plant instance detection and counting from UAV imagery inside the validat
 
 ## Notes
 
-Entrenado con imágenes UAV aéreas reales de banano (count-banana-plants, CC-BY-4.0). Test retenido: recall 0.79, precisión 0.90, mAP50 0.90. Una región; valida/afina para otra finca.
+Trained on real aerial UAV banana imagery (count-banana-plants, CC-BY-4.0). Held-out test: recall 0.79, precision 0.90, mAP50 0.90. Single region; validate/fine-tune for another farm.

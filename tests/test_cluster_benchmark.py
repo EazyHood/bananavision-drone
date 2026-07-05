@@ -23,10 +23,10 @@ def test_run_cluster_benchmark_writes_evidence(tmp_path: Path) -> None:
     assert report["status"] == "pass"
     assert report["truth_coverage"]["cluster_count"] == 6
     assert report["metrics"]["cluster_count"] == 6
-    # Guard de regresion del detector RGB base sobre escenas SINTETICAS. El valor
-    # exacto es sensible a la version de numpy/scikit-image (split de mats vecinas),
-    # asi que el umbral es un piso amplio, no una metrica de campo (el modelo real
-    # es el que se usa en produccion).
+    # Regression guard for the base RGB detector on SYNTHETIC scenes. The exact
+    # value is sensitive to the numpy/scikit-image version (splitting of adjacent
+    # clumps), so the threshold is a wide floor, not a field metric (the real
+    # model is the one used in production).
     assert report["metrics"]["cluster_recall"] >= 0.80
     assert report["metrics"]["fully_detected_cluster_rate"] >= 0.66
     assert (tmp_path / "cluster_benchmark" / "cluster_benchmark_report.json").exists()

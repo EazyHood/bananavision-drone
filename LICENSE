@@ -1,31 +1,10 @@
-BananaVision — Licencia Propietaria / Proprietary License
-Copyright (c) 2026 Jhonatan del Rio Mejia. Todos los derechos reservados / All rights reserved.
+BananaVision — Proprietary License
+Copyright (c) 2026 Jhonatan del Rio Mejia. All rights reserved.
 
-Autor y titular único de todos los derechos: Jhonatan del Rio Mejia.
 Sole author and rights holder: Jhonatan del Rio Mejia.
 
 ===============================================================================
-ESPAÑOL
-===============================================================================
-
-Este software, su código fuente, su documentación y los modelos entrenados que
-lo acompañan (el "Software") son propiedad exclusiva de Jhonatan del Rio Mejia.
-
-SE PROHÍBE su VENTA, reventa, sublicenciamiento, alquiler o cualquier forma de
-explotación comercial, total o parcial, sin autorización expresa y por escrito
-del autor.
-
-Queda permitido, sin costo, usar y estudiar el Software con fines personales,
-educativos, de investigación y de evaluación, siempre que se conserve este aviso
-de copyright y de autoría, y que NO se venda ni se cobre por él.
-
-Cualquier otro uso requiere permiso previo por escrito de Jhonatan del Rio Mejia.
-
-EL SOFTWARE SE ENTREGA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO. EL AUTOR NO SE
-HACE RESPONSABLE DE NINGÚN DAÑO DERIVADO DE SU USO.
-
-===============================================================================
-ENGLISH
+LICENSE
 ===============================================================================
 
 This software, its source code, documentation, and accompanying trained models
@@ -45,10 +24,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND. THE AUTHOR IS
 NOT LIABLE FOR ANY DAMAGES ARISING FROM ITS USE.
 
 ===============================================================================
-Atribución de datos / Data attribution
+Data attribution
 ===============================================================================
 
-El modelo incluido se entrenó con conjuntos de datos bajo licencia CC-BY-4.0;
-dicha atribución se conserva en el archivo NOTICE y debe mantenerse.
 The included model was trained on CC-BY-4.0 datasets; that attribution is kept
 in the NOTICE file and must be preserved.

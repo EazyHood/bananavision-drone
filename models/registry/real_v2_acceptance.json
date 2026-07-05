@@ -16,5 +16,5 @@
     "count_error": 136,
     "count_error_rate": 0.1166
   },
-  "note": "Cifras REALES sobre test aereo retenido con etiquetas por planta. Es UNA finca/region; otra finca requiere validar/afinar."
+  "note": "REAL figures on held-out aerial test with per-plant labels. This is ONE farm/region; a different farm requires validation/tuning."
 }

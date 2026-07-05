@@ -1,8 +1,8 @@
-"""Barrido de umbral de confianza + NMS para MAXIMIZAR el acierto de CONTEO.
+"""Confidence threshold + NMS sweep to MAXIMIZE COUNTING accuracy.
 
-En banano denso, un umbral alto pierde plantas (sub-conteo) y un NMS bajo borra
-plantas solapadas. Este script prueba combinaciones sobre un split retenido y
-elige la que minimiza el error de conteo manteniendo la precision razonable.
+In dense banana, a high threshold misses plants (under-counting) and a low NMS
+removes overlapping plants. This script tests combinations on a held-out split
+and picks the one that minimizes counting error while keeping precision reasonable.
 
     python real_data/tune_inference.py --weights best.pt \
         --data-dir realdata/count_banana_plants --split test
@@ -24,7 +24,7 @@ def gt_count(labels_dir, stem):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--weights", required=True)
-    ap.add_argument("--data-dir", required=True, help="Raiz con <split>/images y <split>/labels")
+    ap.add_argument("--data-dir", required=True, help="Root with <split>/images and <split>/labels")
     ap.add_argument("--split", default="test")
     ap.add_argument("--imgsz", type=int, default=1024)
     args = ap.parse_args()
@@ -37,8 +37,8 @@ def main():
     imgs = sorted(glob.glob(os.path.join(img_dir, "*.jpg")) + glob.glob(os.path.join(img_dir, "*.png")))
     gts = [gt_count(lbl_dir, os.path.splitext(os.path.basename(p))[0]) for p in imgs]
     total_gt = sum(gts)
-    print(f"{len(imgs)} imagenes, {total_gt} plantas reales\n")
-    print(f"{'conf':>5}{'iou':>5}{'pred':>7}{'err_conteo%':>13}{'MAE/img':>9}")
+    print(f"{len(imgs)} images, {total_gt} real plants\n")
+    print(f"{'conf':>5}{'iou':>5}{'pred':>7}{'count_err%':>13}{'MAE/img':>9}")
     print("-" * 40)
 
     best = None
@@ -55,8 +55,8 @@ def main():
             if best is None or err < best[0]:
                 best = (err, conf, iou, total_pred)
     print("-" * 40)
-    print(f"MEJOR para conteo: conf={best[1]} iou={best[2]} -> {best[3]} plantas, "
-          f"error de conteo {best[0]:.1f}% (real {total_gt})")
+    print(f"BEST for counting: conf={best[1]} iou={best[2]} -> {best[3]} plants, "
+          f"counting error {best[0]:.1f}% (real {total_gt})")
 
 
 if __name__ == "__main__":

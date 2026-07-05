@@ -23,5 +23,5 @@
     "v3@0.25": {"precision": 0.8237, "recall": 0.7976, "f1": 0.8105, "count_error_rate": 0.0317},
     "map50_detector": {"v2": 0.85, "v3": 0.915}
   },
-  "note": "Cifras REALES sobre test aereo retenido con etiquetas por planta. Mejora real vs v2 con el MISMO metodo. UNA sola finca/region; otra finca requiere validar/afinar. La calibracion de conteo es sensible a la densidad del campo (sub-conteo estructural en macollas ocluidas)."
+  "note": "REAL figures on held-out aerial test with per-plant labels. Genuine improvement vs v2 using the SAME method. Single farm/region; another farm requires validation/tuning. Count calibration is sensitive to field density (structural under-counting in occluded mats)."
 }
