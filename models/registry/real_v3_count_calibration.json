@@ -1,0 +1,57 @@
+{
+  "metric": "acierto de conteo agregado (inventario) del cultivo de banano",
+  "method": "5-fold CV sobre 200 imagenes que el detector nunca vio (splits ['valid', 'test'])",
+  "weights": "banana_real_v3.pt",
+  "images_unseen": 200,
+  "gt_total": 3132,
+  "per_fold": [
+    {
+      "fold": 0,
+      "n": 40,
+      "conf": 0.44,
+      "k": 1.0056,
+      "count_error_pct": 2.397,
+      "mae": 3.449
+    },
+    {
+      "fold": 1,
+      "n": 40,
+      "conf": 0.44,
+      "k": 1.0024,
+      "count_error_pct": 0.704,
+      "mae": 3.081
+    },
+    {
+      "fold": 2,
+      "n": 40,
+      "conf": 0.44,
+      "k": 0.9949,
+      "count_error_pct": 3.16,
+      "mae": 2.606
+    },
+    {
+      "fold": 3,
+      "n": 40,
+      "conf": 0.44,
+      "k": 0.9972,
+      "count_error_pct": 1.776,
+      "mae": 4.139
+    },
+    {
+      "fold": 4,
+      "n": 40,
+      "conf": 0.44,
+      "k": 1.0048,
+      "count_error_pct": 1.961,
+      "mae": 3.101
+    }
+  ],
+  "count_error_oof_pct_mean": 2.0,
+  "count_error_oof_pct_std": 0.804,
+  "count_accuracy_pct": 98.0,
+  "operating_point": {
+    "confidence_threshold": 0.44,
+    "count_correction_k": 1.001
+  },
+  "honesty_note": "Acierto de CONTEO AGREGADO sobre area, NO recall por planta (~0.80). El total acierta por compensacion estable en densidad mixta; en campo de densidad uniformemente extrema, recalibrar con imagenes locales."
+}
