@@ -8,16 +8,16 @@ version = "1.0.0"
 description = "Drone-ready banana plant detection, instance splitting, counting, and geospatial export."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "Apache-2.0" }
+license = { text = "Proprietary — All Rights Reserved. No sale. Copyright (c) 2026 jhona." }
 authors = [
-  { name = "BananaVision contributors" }
+  { name = "jhona" }
 ]
 keywords = ["banana", "drone", "uav", "computer-vision", "agriculture", "yolo", "segmentation"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Science/Research",
   "Intended Audience :: Developers",
-  "License :: OSI Approved :: Apache Software License",
+  "License :: Other/Proprietary License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",

@@ -1,7 +1,9 @@
 BananaVision
-Copyright 2026 jhona.
+Copyright (c) 2026 jhona. All rights reserved.
+Sole author and rights holder: jhona.
 
-This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+Proprietary license — see LICENSE. SELLING or commercial exploitation is
+PROHIBITED without the author's written permission.
 
 --------------------------------------------------------------------------------
 Included trained model: models/banana_real_v2.pt

@@ -951,6 +951,13 @@ The design follows published banana-UAV findings: RGB image variants and altitud
 
 See [docs/REFERENCES.md](docs/REFERENCES.md).
 
-## License
+## Autor y licencia
 
-Apache-2.0. Build with it, publish it, improve it, and keep it accessible.
+**Autor y titular único de todos los derechos: jhona.** Copyright © 2026 jhona.
+
+**Licencia propietaria — Todos los derechos reservados.** Se **PROHÍBE su venta**,
+reventa, sublicenciamiento o cualquier explotación comercial, total o parcial, sin
+permiso expreso y por escrito del autor. Se permite el uso personal, educativo, de
+investigación y de evaluación conservando este aviso. Ver [LICENSE](LICENSE).
+
+El modelo incluido se entrenó con datos bajo CC-BY-4.0 (atribución en [NOTICE](NOTICE)).
