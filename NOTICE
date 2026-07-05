@@ -4,13 +4,13 @@ Copyright 2026 jhona.
 This product is licensed under the Apache License, Version 2.0 (see LICENSE).
 
 --------------------------------------------------------------------------------
-Included trained model: models/banana_real_v1.pt
+Included trained model: models/banana_real_v2.pt
 --------------------------------------------------------------------------------
-The included model was trained on the DS-v1 dataset from the "AI-BananaMapping"
-work (UAV-based detection of Black Sigatoka in banana crops).
+The included model was trained on the "count-banana-plants" dataset (aerial UAV
+imagery of banana plantations, per-plant bounding-box labels).
 
-  Dataset: DS-v1 / DS-v2, Zenodo record 20945958
-  URL:     https://zenodo.org/records/20945958
+  Dataset: count-banana-plants (Roboflow Universe)
+  URL:     https://universe.roboflow.com/count-banana-plants/count-banana-plants
   License: CC-BY-4.0 (Creative Commons Attribution 4.0 International)
 
 Per CC-BY-4.0, attribution is required for the dataset and for models derived

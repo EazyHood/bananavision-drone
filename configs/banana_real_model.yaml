@@ -1,8 +1,9 @@
-# Perfil de inferencia con el MODELO ENTRENADO CON IMÁGENES REALES.
-# Detector YOLO (cajas) entrenado sobre ~14k tiles UAV reales de banano.
+# Perfil de inferencia con el MODELO REAL v2 (recomendado).
+# YOLOv8m entrenado sobre imágenes UAV aéreas reales de banano con etiquetas por planta.
+# Test retenido: recall 0.79, precisión 0.90, mAP50 0.90.
 detector: yolo-seg
-model_path: models/banana_real_v1.pt
-confidence_threshold: 0.30
+model_path: models/banana_real_v2.pt
+confidence_threshold: 0.35
 iou_threshold: 0.45
 gsd_cm: 2.0
 expected_crown_diameter_m: 2.4

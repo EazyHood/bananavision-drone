@@ -1,10 +1,10 @@
-# Model Card: BananaVision Real UAV v1.0
+# Model Card: BananaVision Real Aerial v2.0
 
-- Generated at: 2026-07-04T15:43:51+00:00
-- Version: real-v1.0
-- Architecture: YOLOv8s detection (14k real UAV banana tiles)
-- Model SHA256: 794492aa2a0259b66203cce973df5fb052496f1cd99229d4275a46f00f5e6bc2
-- Manifest SHA256: 378ac58a6280ae7c14f1c313fb583f5aeb83bf376024f925cf38836261379777
+- Generated at: 2026-07-05T03:36:53+00:00
+- Version: real-v2.0
+- Architecture: YOLOv8m detection (real aerial banana, per-plant labels)
+- Model SHA256: d8104c0a30ac270b957eead79683c7ee73641c4f4fef8dd219fa6aa8e361e9b1
+- Manifest SHA256: f406af84b838883f1e8c3814bdae575dbf91401c60cf14e9c002dd018ff77357
 
 ## Intended Use
 
@@ -19,13 +19,13 @@ Banana plant instance detection and counting from UAV imagery inside the validat
 
 - Validation plan: not provided.
 - Passed: None
-- Images: 4611
-- Truth count: 6017
-- Prediction count: 5839
-- Count error rate: 0.0296
-- Precision: 0.4720
-- Recall: 0.4580
-- F1: 0.4649
+- Images: 50
+- Truth count: 1166
+- Prediction count: 1030
+- Count error rate: 0.1166
+- Precision: 0.8960
+- Recall: 0.7920
+- F1: 0.8408
 - Annotated banana clusters: 0
 - Cluster truth plants: 0
 - Cluster recall: unknown
@@ -61,4 +61,4 @@ Banana plant instance detection and counting from UAV imagery inside the validat
 
 ## Notes
 
-Entrenado con imágenes UAV REALES (DS-v1 AI-BananaMapping, Zenodo 20945958, CC-BY-4.0). Dataset de baja altitud (escala de planta). Valida en tu finca antes de confiar en el conteo.
+Entrenado con imágenes UAV aéreas reales de banano (count-banana-plants, CC-BY-4.0). Test retenido: recall 0.79, precisión 0.90, mAP50 0.90. Una región; valida/afina para otra finca.

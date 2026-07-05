@@ -6,28 +6,29 @@ Banana fields are harder than palm, avocado, mango, or other isolated-tree crops
 
 ## 🎯 Incluye un modelo entrenado con imágenes UAV REALES (listo para usar)
 
-Trae un modelo **entrenado sobre ~14 000 tiles de imágenes UAV REALES de banano**
-(dataset abierto AI-BananaMapping, [Zenodo 20945958](https://zenodo.org/records/20945958),
-CC-BY-4.0): `models/banana_real_v1.pt`. Úsalo directamente, sin entrenar:
+Trae un modelo **entrenado sobre imágenes UAV aéreas REALES de banano, etiquetadas planta por
+planta** (dataset abierto [count-banana-plants](https://universe.roboflow.com/count-banana-plants/count-banana-plants),
+CC-BY-4.0): `models/banana_real_v2.pt`. Úsalo directamente, sin entrenar:
 
 ```bash
 pip install -e ".[ml,geo]"
 bananavision infer TU_ORTOFOTO.tif --config configs/banana_real_model.yaml -o resultados
 ```
 
-**Rendimiento sobre 4 611 tiles de test real nunca vistos** (registrado en `models/registry/`,
-ver [MODEL_CARD_REAL](docs/MODEL_CARD_REAL.md)):
+**Rendimiento sobre el test real retenido** (50 imágenes, 1 166 plantas, nunca vistas;
+registrado en `models/registry/`):
 
 | Métrica | Valor real |
 |---|---|
-| **Error de conteo agregado** | **~3 %** (los FP y FN se compensan en el total) |
-| mAP50 | 0.411 |
-| Precisión / Recall | 0.47 / 0.46 |
+| **Recall** | **0.79** (encuentra el 79 % de las plantas) |
+| **Precisión** | **0.90** |
+| **mAP50** | **0.90** |
+| Error de conteo agregado | ~12 % (sub-conteo) |
 
-> Cifras **reales de campo**, no del sintético. El modelo es un detector real funcional pero
-> **no pasa** los gates estrictos de "garantía de campo" del framework (que exigen más
-> precisión); el propio `model-card` lo marca con honestidad. Para tu finca concreta, afínalo
-> con tus imágenes — el pipeline de entrenamiento (`real_data/`, `bananavision train`) lo soporta.
+> Cifras **reales de campo** (vista aérea nadir, etiquetas por planta), no de datos sintéticos.
+> Es un detector de banano genuinamente bueno. **Ojo honesto:** está medido sobre **una
+> región/finca** (la del dataset); una finca muy distinta seguiría necesitando validación o un
+> afinado rápido con tus imágenes — el pipeline lo soporta (`real_data/`, `bananavision train`).
 
 ## What is included
 
