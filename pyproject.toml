@@ -8,9 +8,9 @@ version = "1.0.0"
 description = "Drone-ready banana plant detection, instance splitting, counting, and geospatial export."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "Proprietary — All Rights Reserved. No sale. Copyright (c) 2026 jhona." }
+license = { text = "Proprietary — All Rights Reserved. No sale. Copyright (c) 2026 Jhonatan del Rio Mejia." }
 authors = [
-  { name = "jhona" }
+  { name = "Jhonatan del Rio Mejia" }
 ]
 keywords = ["banana", "drone", "uav", "computer-vision", "agriculture", "yolo", "segmentation"]
 classifiers = [

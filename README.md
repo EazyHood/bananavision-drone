@@ -953,7 +953,7 @@ See [docs/REFERENCES.md](docs/REFERENCES.md).
 
 ## Autor y licencia
 
-**Autor y titular único de todos los derechos: jhona.** Copyright © 2026 jhona.
+**Autor y titular único de todos los derechos: Jhonatan del Rio Mejia.** Copyright © 2026 Jhonatan del Rio Mejia.
 
 **Licencia propietaria — Todos los derechos reservados.** Se **PROHÍBE su venta**,
 reventa, sublicenciamiento o cualquier explotación comercial, total o parcial, sin
