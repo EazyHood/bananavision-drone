@@ -996,6 +996,16 @@ The design follows published banana-UAV findings: RGB image variants and altitud
 
 See [docs/REFERENCES.md](docs/REFERENCES.md).
 
+## 💚 Support this project
+
+BananaVision is free to use. It's a young project I build and improve on my own — if it saves
+you time in the field, a small donation helps me keep training better models and adding
+features. No pressure: everything here stays free.
+
+- **GitHub Sponsors** — [Sponsor @EazyHood](https://github.com/sponsors/EazyHood) (one-time or monthly).
+
+The **Sponsor** button also appears at the top of this repository.
+
 ## Author and license
 
 **Author and sole holder of all rights: Jhonatan del Rio Mejia.** Copyright © 2026 Jhonatan del Rio Mejia.
