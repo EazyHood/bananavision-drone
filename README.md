@@ -1,6 +1,17 @@
-# BananaVision Drone
+<div align="center">
 
-Open-source banana plant detection, instance splitting, counting, and geospatial export for UAV imagery.
+<img src="docs/banner.png" alt="BananaVision — detect and count banana plants from drone imagery" width="820">
+
+**Banana plant detection, instance splitting, counting, and geospatial export for UAV imagery.**
+
+[![Download](https://img.shields.io/badge/Download-releases-2f5d3a?style=for-the-badge&logo=github&logoColor=white)](https://github.com/EazyHood/bananavision-drone/releases)
+[![Version](https://img.shields.io/badge/version-1.0.0-1f6feb?style=for-the-badge)](https://github.com/EazyHood/bananavision-drone)
+[![Downloads](https://img.shields.io/github/downloads/EazyHood/bananavision-drone/total?style=for-the-badge&color=3a3a3a)](https://github.com/EazyHood/bananavision-drone/releases)
+[![Sponsor](https://img.shields.io/badge/Sponsor-EazyHood-ec4899?style=for-the-badge&logo=githubsponsors&logoColor=white)](https://github.com/sponsors/EazyHood)
+[![Author](https://img.shields.io/badge/by-EazyHood-8A2BE2?style=for-the-badge)](https://github.com/EazyHood)
+[![License](https://img.shields.io/badge/License-Proprietary%20·%20No%20resale-555555?style=for-the-badge)](LICENSE)
+
+</div>
 
 ## Proof it works
 
