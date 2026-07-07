@@ -1,8 +1,8 @@
 # Counting evidence — BananaVision
 
-Visual proof of the real `banana_real_v7.pt` model counting banana plants on
-**200 real UAV images the model NEVER saw** (`valid` + `test` splits of the
-count-banana-plants dataset). Fully reproducible with the scripts in `real_data/`.
+Visual proof of the **ensemble** (`banana_real_v5.pt` + `banana_real_v7.pt`, Weighted Boxes
+Fusion) counting banana plants on **200 real UAV images the models NEVER saw** (`valid` + `test`
+splits of the count-banana-plants dataset). Fully reproducible with the scripts in `real_data/`.
 
 ## 1. AI count vs real count
 
@@ -11,9 +11,9 @@ count-banana-plants dataset). Fully reproducible with the scripts in `real_data/
 Each point is an image (X = real plants, Y = plants counted by the AI). The diagonal
 is a perfect count.
 
-- **TOTAL: 3,132 real plants vs 3,162 counted → 99.0 % in this batch.**
-- **Count accuracy validated by cross-validation (5 folds): 99.2 %** (0.8 % error).
-  See `models/registry/real_v7_count_calibration.json`.
+- **TOTAL: 3,132 real plants vs 3,141 counted → 99.7 % in this batch.**
+- **Best detection quality of the model line: F1 0.89** (precision 0.905, recall 0.878),
+  fusing YOLOv8m (v5) + YOLO11m (v7). See `models/registry/real_ensemble_acceptance.json`.
 
 ## 2. Detection on real plants
 
@@ -28,7 +28,7 @@ ranging from sparse to very dense.
 
 - **YES:** the **aggregate crop count over an area** is accurate to ~**98 %**. This is the
   metric a farm needs for its total inventory.
-- **It does NOT** mean detecting 98 % of the plants one by one: the **per-plant recall is ~0.86**.
+- **It does NOT** mean detecting 98 % of the plants one by one: the **per-plant recall is ~0.88**.
   In dense clumps some plants are occluded from an overhead view, unrecoverable in 2D.
 - **Density/domain bias (important and honest):** with a fixed threshold, sparse zones
   **over-count** (~+13 %) and dense zones **under-count** (~−23 %). Over an area of mixed
