@@ -56,6 +56,12 @@ YOLO11m detector at 1024 px, conf 0.25, IoU≥0.5 matching):
 > ceiling you need more data (more farms/altitudes). The pipeline supports this (`real_data/`,
 > `bananavision train`).
 
+**🏆 Maximum accuracy (ensemble):** for the best detection quality, use
+`configs/banana_ensemble.yaml`, which fuses **two architectures (YOLOv8m + YOLO11m) with
+Weighted Boxes Fusion** — held-out real test **F1 0.89** (precision 0.905, recall 0.878),
+the best result of the whole model line. It runs both models, so it is ~2× slower than the
+single-model default. Needs `pip install "bananavision-drone[ml]"` (includes `ensemble-boxes`).
+
 ### 🎯 Crop count accuracy: **98%** (validated by cross-validation)
 
 For the **total crop count** —the number a farm cares about for its inventory—

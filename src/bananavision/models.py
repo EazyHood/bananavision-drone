@@ -16,6 +16,8 @@ class GeoPoint:
 class InferenceConfig:
     detector: str = "rgb-canopy"
     model_path: str | None = None
+    ensemble_model_paths: list[str] | None = None
+    ensemble_weights: list[float] | None = None
     confidence_threshold: float = 0.25
     iou_threshold: float = 0.45
     gsd_cm: float = 2.0
@@ -46,10 +48,16 @@ class InferenceConfig:
         return max(4.0, self.expected_crown_diameter_m / self.gsd_m)
 
     def validate(self) -> None:
-        if self.detector not in {"rgb-canopy", "yolo-seg"}:
-            raise ValueError("detector must be 'rgb-canopy' or 'yolo-seg'")
+        if self.detector not in {"rgb-canopy", "yolo-seg", "yolo-ensemble"}:
+            raise ValueError("detector must be 'rgb-canopy', 'yolo-seg' or 'yolo-ensemble'")
         if self.detector == "yolo-seg" and not self.model_path:
             raise ValueError("model_path is required when detector='yolo-seg'")
+        if self.detector == "yolo-ensemble" and (
+            not self.ensemble_model_paths or len(self.ensemble_model_paths) < 2
+        ):
+            raise ValueError(
+                "ensemble_model_paths (at least 2) is required when detector='yolo-ensemble'"
+            )
         if not 0.0 <= self.confidence_threshold <= 1.0:
             raise ValueError("confidence_threshold must be between 0 and 1")
         if not 0.0 <= self.iou_threshold <= 1.0:

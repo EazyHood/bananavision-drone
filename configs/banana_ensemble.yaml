@@ -1,0 +1,24 @@
+# MAXIMUM-ACCURACY profile: WBF ensemble of the two real models (YOLOv8m v5 + YOLO11m v7).
+# Fusing two architectures combines their strengths -> best held-out test F1 (~0.89),
+# precision 0.905, recall 0.878. It runs BOTH models, so it is ~2x slower than a single model.
+# For a lighter, single-model run (F1 0.88) use configs/banana_real_model.yaml (v7).
+detector: yolo-ensemble
+ensemble_model_paths:
+  - models/banana_real_v5.pt
+  - models/banana_real_v7.pt
+ensemble_weights: [1.0, 1.2]
+confidence_threshold: 0.20
+iou_threshold: 0.45
+gsd_cm: 2.0
+expected_crown_diameter_m: 2.4
+min_component_area_px: 80
+split_mat_clusters: true
+min_center_distance_ratio: 0.42
+center_distance_weight: 0.35
+canopy_fill_ratio: 0.58
+max_split_instances: 12
+tile_size: 1024
+tile_overlap: 128
+class_name: banana_plant
+rgb_threshold_quantile: 0.82
+output_overlay: true

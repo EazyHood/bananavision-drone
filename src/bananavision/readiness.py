@@ -77,22 +77,35 @@ def _check_config(config: InferenceConfig) -> ReadinessCheck:
 
 def _check_detector_dependencies(config: InferenceConfig) -> list[ReadinessCheck]:
     checks = [ReadinessCheck("pillow", "pass" if _module_exists("PIL") else "fail", "Pillow image backend")]
-    if config.detector == "yolo-seg":
-        model_path = Path(config.model_path or "")
-        checks.append(
-            ReadinessCheck(
-                "model_file",
-                "pass" if model_path.exists() else "fail",
-                str(model_path) if model_path.exists() else f"Model not found: {model_path}",
-            )
+    if config.detector in {"yolo-seg", "yolo-ensemble"}:
+        paths = (
+            [config.model_path or ""]
+            if config.detector == "yolo-seg"
+            else list(config.ensemble_model_paths or [])
         )
+        for model_path in (Path(p) for p in paths):
+            checks.append(
+                ReadinessCheck(
+                    "model_file",
+                    "pass" if model_path.exists() else "fail",
+                    str(model_path) if model_path.exists() else f"Model not found: {model_path}",
+                )
+            )
         checks.append(
             ReadinessCheck(
                 "ultralytics",
                 "pass" if _module_exists("ultralytics") else "fail",
-                "Ultralytics is required for yolo-seg inference",
+                "Ultralytics is required for YOLO inference",
             )
         )
+        if config.detector == "yolo-ensemble":
+            checks.append(
+                ReadinessCheck(
+                    "ensemble_boxes",
+                    "pass" if _module_exists("ensemble_boxes") else "fail",
+                    "ensemble-boxes is required for yolo-ensemble inference",
+                )
+            )
     return checks
 
 
@@ -126,7 +139,7 @@ def _check_disk(path: str | Path, min_free_gb: float) -> ReadinessCheck:
 
 
 def _check_gpu(config: InferenceConfig) -> ReadinessCheck:
-    if config.detector != "yolo-seg":
+    if config.detector not in {"yolo-seg", "yolo-ensemble"}:
         return ReadinessCheck("gpu", "warn", "RGB baseline can run on CPU; GPU not required")
     if not _module_exists("torch"):
         return ReadinessCheck("gpu", "warn", "Torch not installed; cannot verify CUDA")

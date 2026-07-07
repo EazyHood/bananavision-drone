@@ -40,6 +40,7 @@ api = [
 ]
 ml = [
   "ultralytics>=8.3",
+  "ensemble-boxes>=1.0",
 ]
 geo = [
   "rasterio>=1.3",

@@ -8,6 +8,7 @@ import yaml
 from PIL import Image
 
 from .detectors.rgb_canopy import RgbCanopyDetector
+from .detectors.yolo_ensemble import YoloEnsembleDetector
 from .detectors.yolo_seg import YoloSegDetector
 from .geo import load_geotransform
 from .io import assign_ids, attach_geo, write_bundle
@@ -41,6 +42,8 @@ def make_detector(config: InferenceConfig):
         if not config.model_path:
             raise ValueError("model_path is required when detector='yolo-seg'")
         return YoloSegDetector(config.model_path)
+    if config.detector == "yolo-ensemble":
+        return YoloEnsembleDetector(config.ensemble_model_paths or [], config.ensemble_weights)
     raise ValueError(f"Unknown detector: {config.detector}")
 
 
