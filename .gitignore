@@ -23,3 +23,6 @@ datasets/
 !models/*.pt
 realdata/
 real_eval/
+
+# informe de trafico local (no publicar)
+reports/
