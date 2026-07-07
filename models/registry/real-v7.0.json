@@ -1,0 +1,53 @@
+{
+  "version": "real-v7.0",
+  "created_at": "2026-07-05T18:00:00+00:00",
+  "model_path": "models\\banana_real_v7.pt",
+  "model_sha256": "dc021d1e94d3c6c6376170f3a46603399e71401366a4045966a2382fe637038d",
+  "supersedes": "real-v5.0",
+  "runtime": {
+    "bananavision_version": "1.0.0",
+    "config": {
+      "detector": "yolo-seg",
+      "model_path": "models\\banana_real_v7.pt",
+      "confidence_threshold": 0.44,
+      "iou_threshold": 0.45,
+      "tile_size": 1024,
+      "tile_overlap": 128,
+      "class_name": "banana_plant"
+    },
+    "training": {
+      "base": "yolo11m.pt",
+      "imgsz": 1024,
+      "epochs": 80,
+      "batch": 4,
+      "method": "real-crop copy-paste composites (1200) + real train, YOLO11m architecture",
+      "purpose": "best per-object detection + calibrated count"
+    }
+  },
+  "acceptance_report": {
+    "source": "held-out test (count-banana-plants, aerial UAV, per-plant labels)",
+    "dataset": "count-banana-plants (Roboflow Universe, CC-BY-4.0)",
+    "eval_method": "raw detector, imgsz=1024, conf=0.25, NMS iou=0.7, greedy IoU>=0.5 matching",
+    "metrics": {
+      "images": 50,
+      "truth_count": 1166,
+      "prediction_count": 1117,
+      "precision": 0.8988,
+      "recall": 0.8611,
+      "f1": 0.8795,
+      "map50": 0.9467,
+      "map50_95": 0.5535,
+      "count_error_rate": 0.042
+    },
+    "progression_same_test_at_conf_0_25": {
+      "v3": {"f1": 0.8105, "map50": 0.915},
+      "v5": {"f1": 0.8747, "map50": 0.928},
+      "v7": {"f1": 0.8795, "map50": 0.9467}
+    },
+    "note": "YOLO11m. Modest but real improvement over v5 on the held-out test: mAP50 0.928 -> 0.947, recall 0.847 -> 0.861, count error lower; F1 tied. Single farm/region; recalibrate count per farm."
+  },
+  "benchmark_report": null,
+  "promotion": null,
+  "notes": "YOLO11m trained with real-crop copy-paste composites on count-banana-plants (CC-BY-4.0). Best model of the v2..v7 line on the held-out test.",
+  "manifest_sha256": null
+}

@@ -1,12 +1,12 @@
-# Inference profile with the REAL MODEL v5 (recommended).
-# YOLOv8m trained for density/overlap with real-crop copy-paste augmentation + label cleanup.
-# CALIBRATED COUNT: conf 0.48 -> aggregate count accuracy ~98% (error 1.7%), validated with
+# Inference profile with the REAL MODEL v7 (recommended).
+# YOLO11m trained on real aerial banana imagery with real-crop copy-paste augmentation.
+# CALIBRATED COUNT: conf 0.44 -> aggregate count accuracy ~99% (error 0.8%), validated with
 # 5-fold cross-validation over 200 UNSEEN images.
-# See models/registry/real_v5_count_calibration.json (reproducible: real_data/calibrate_count.py).
-# Per-plant detection (reference, at conf 0.25): recall 0.85 / precision 0.90 / F1 0.88 / mAP50 0.93.
+# See models/registry/real_v7_count_calibration.json (reproducible: real_data/calibrate_count.py).
+# Per-plant detection (reference, at conf 0.25): recall 0.86 / precision 0.90 / F1 0.88 / mAP50 0.95.
 detector: yolo-seg
-model_path: models/banana_real_v5.pt
-confidence_threshold: 0.48
+model_path: models/banana_real_v7.pt
+confidence_threshold: 0.44
 iou_threshold: 0.45
 gsd_cm: 2.0
 expected_crown_diameter_m: 2.4

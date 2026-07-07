@@ -1,6 +1,6 @@
 # Counting evidence — BananaVision
 
-Visual proof of the real `banana_real_v5.pt` model counting banana plants on
+Visual proof of the real `banana_real_v7.pt` model counting banana plants on
 **200 real UAV images the model NEVER saw** (`valid` + `test` splits of the
 count-banana-plants dataset). Fully reproducible with the scripts in `real_data/`.
 
@@ -11,9 +11,9 @@ count-banana-plants dataset). Fully reproducible with the scripts in `real_data/
 Each point is an image (X = real plants, Y = plants counted by the AI). The diagonal
 is a perfect count.
 
-- **TOTAL: 3,132 real plants vs 3,114 counted → 99.4 % in this batch.**
-- **Count accuracy validated by cross-validation (5 folds): 98.3 %** (1.7 % error).
-  See `models/registry/real_v5_count_calibration.json`.
+- **TOTAL: 3,132 real plants vs 3,162 counted → 99.0 % in this batch.**
+- **Count accuracy validated by cross-validation (5 folds): 99.2 %** (0.8 % error).
+  See `models/registry/real_v7_count_calibration.json`.
 
 ## 2. Detection on real plants
 
@@ -28,7 +28,7 @@ ranging from sparse to very dense.
 
 - **YES:** the **aggregate crop count over an area** is accurate to ~**98 %**. This is the
   metric a farm needs for its total inventory.
-- **It does NOT** mean detecting 98 % of the plants one by one: the **per-plant recall is ~0.85**.
+- **It does NOT** mean detecting 98 % of the plants one by one: the **per-plant recall is ~0.86**.
   In dense clumps some plants are occluded from an overhead view, unrecoverable in 2D.
 - **Density/domain bias (important and honest):** with a fixed threshold, sparse zones
   **over-count** (~+13 %) and dense zones **under-count** (~−23 %). Over an area of mixed
@@ -47,7 +47,7 @@ CV, out-of-fold):
 | test | 77.1 % | **96.6 %** |
 
 In deployment: label a few images from the target farm and run
-`python real_data/calibrate_count.py --weights models/banana_real_v5.pt --data-root <farm>`.
+`python real_data/calibrate_count.py --weights models/banana_real_v7.pt --data-root <farm>`.
 The true ceiling beyond this is only raised by having **more data from more farms**.
 
 ## Reproducibility

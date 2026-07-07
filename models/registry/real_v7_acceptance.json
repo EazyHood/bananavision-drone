@@ -1,0 +1,31 @@
+{
+  "source": "held-out test (count-banana-plants, aerial UAV, per-plant labels)",
+  "dataset": "count-banana-plants (Roboflow Universe, CC-BY-4.0)",
+  "eval_method": "raw detector, imgsz=1024, conf=0.25, NMS iou=0.7, greedy IoU>=0.5 matching",
+  "metrics": {
+    "images": 50,
+    "truth_count": 1166,
+    "prediction_count": 1117,
+    "precision": 0.8988,
+    "recall": 0.8611,
+    "f1": 0.8795,
+    "map50": 0.9467,
+    "map50_95": 0.5535,
+    "count_error_rate": 0.042
+  },
+  "progression_same_test_at_conf_0_25": {
+    "v3": {
+      "f1": 0.8105,
+      "map50": 0.915
+    },
+    "v5": {
+      "f1": 0.8747,
+      "map50": 0.928
+    },
+    "v7": {
+      "f1": 0.8795,
+      "map50": 0.9467
+    }
+  },
+  "note": "YOLO11m. Modest but real improvement over v5 on the held-out test: mAP50 0.928 -> 0.947, recall 0.847 -> 0.861, count error lower; F1 tied. Single farm/region; recalibrate count per farm."
+}
