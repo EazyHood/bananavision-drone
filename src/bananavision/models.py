@@ -34,6 +34,7 @@ class InferenceConfig:
     class_name: str = "banana_plant"
     rgb_threshold_quantile: float = 0.82
     output_overlay: bool = True
+    mark_crown_centers: bool = True
     mission_geo_dedupe_distance_m: float = 1.2
     mission_pixel_dedupe_distance_px: float = 32.0
 

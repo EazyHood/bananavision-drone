@@ -10,6 +10,7 @@ from PIL import Image
 from .detectors.rgb_canopy import RgbCanopyDetector
 from .detectors.yolo_ensemble import YoloEnsembleDetector
 from .detectors.yolo_seg import YoloSegDetector
+from .crown_centers import attach_crown_centers
 from .geo import load_geotransform
 from .io import assign_ids, attach_geo, write_bundle
 from .mission import write_mission_outputs
@@ -54,6 +55,8 @@ def predict_image(image_path: str | Path, config: InferenceConfig, detector=None
     with Image.open(image_path) as image:
         image = image.convert("RGB")
         detections = _predict_image_or_tiles(image, detector, config)
+        if config.mark_crown_centers:
+            attach_crown_centers(image, detections, config)
         transform = load_geotransform(image_path)
         attach_geo(assign_ids(detections), transform)
         result = PredictionResult(

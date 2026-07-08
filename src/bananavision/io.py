@@ -172,7 +172,15 @@ def draw_overlay(image_path: str | Path, detections: list[Detection], path: str 
         x1, y1, x2, y2 = detection.bbox
         cx, cy = detection.center
         draw.rectangle((x1, y1, x2, y2), outline=(255, 214, 10, 255), width=3)
-        draw.ellipse((cx - 4, cy - 4, cx + 4, cy + 4), fill=(255, 56, 56, 240))
+        crown_centers = detection.meta.get("crown_centers")
+        if crown_centers:
+            # a small circle on each banana crown (rosette center); mats have 1-3
+            for point in crown_centers:
+                px, py = float(point[0]), float(point[1])
+                draw.ellipse((px - 6, py - 6, px + 6, py + 6), outline=(255, 56, 56, 255), width=2)
+                draw.ellipse((px - 1.5, py - 1.5, px + 1.5, py + 1.5), fill=(255, 56, 56, 255))
+        else:
+            draw.ellipse((cx - 4, cy - 4, cx + 4, cy + 4), fill=(255, 56, 56, 240))
         label = f"{detection.id or ''} {detection.score:.2f}".strip()
         text_box = draw.textbbox((0, 0), label, font=font)
         text_width = text_box[2] - text_box[0]
