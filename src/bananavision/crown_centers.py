@@ -26,33 +26,52 @@ def _centers_in_box(rgb_box: np.ndarray, crown_px: float, max_centers: int) -> l
     from skimage.feature import peak_local_max
 
     h, w = rgb_box.shape[:2]
+    cx0, cy0 = w / 2.0, h / 2.0
     if min(h, w) < 6:
-        return [(w / 2.0, h / 2.0)]
+        return [(cx0, cy0)]
     a = rgb_box.astype(np.float32) / 255.0
     exg = 2.0 * a[..., 1] - a[..., 0] - a[..., 2]
     mask = exg > 0.04
     if mask.sum() < max(12, 0.03 * h * w):
-        return [(w / 2.0, h / 2.0)]
+        return [(cx0, cy0)]
 
     # Distance transform: high at the center of each green blob, low near edges/gaps.
     dist = ndi.distance_transform_edt(mask).astype(np.float32)
     dist = ndi.gaussian_filter(dist, sigma=max(1.0, 0.12 * crown_px))
     if dist.max() <= 0:
-        ys, xs = np.nonzero(mask)
-        return [(float(xs.mean()), float(ys.mean()))]
+        return [(cx0, cy0)]
 
+    # Centrality prior: the detector's boxes are per-plant, so the crown belongs
+    # near the box center. A raised-cosine window suppresses mass that leaks in
+    # from NEIGHBORING plants at the box border (the classic edge-dot failure).
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+    rr = np.sqrt(((xx - cx0) / max(1.0, cx0)) ** 2 + ((yy - cy0) / max(1.0, cy0)) ** 2)
+    window = 0.5 * (1.0 + np.cos(np.pi * np.clip(rr, 0.0, 1.0)))
+    score = dist * window
+
+    # Peaks only in the interior: never allow a dot on the box border.
+    margin = max(2, int(round(0.18 * min(h, w))))
     min_dist = max(3, int(round(0.55 * crown_px)))
     peaks = peak_local_max(
-        dist,
+        score,
         min_distance=min_dist,
         num_peaks=max_centers,
-        threshold_rel=0.45,
-        exclude_border=False,
+        threshold_rel=0.35,
+        exclude_border=margin,
     )
     if len(peaks) == 0:
-        ys, xs = np.nonzero(mask)
-        return [(float(xs.mean()), float(ys.mean()))]
-    return [(float(c), float(r)) for r, c in peaks]  # (x, y)
+        return [(cx0, cy0)]
+    centers = [(float(c), float(r)) for r, c in peaks]  # (x, y)
+    if max_centers == 1:
+        # Single plant: nudge the box center toward the foliage peak, capped to
+        # 30% of the half-size so the dot always stays central.
+        px, py = centers[0]
+        dx, dy = px - cx0, py - cy0
+        lim_x, lim_y = 0.30 * cx0, 0.30 * cy0
+        dx = max(-lim_x, min(lim_x, dx))
+        dy = max(-lim_y, min(lim_y, dy))
+        return [(cx0 + dx, cy0 + dy)]
+    return centers
 
 
 def attach_crown_centers(
