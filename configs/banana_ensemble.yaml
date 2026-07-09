@@ -1,13 +1,14 @@
-# MAXIMUM-ACCURACY profile: WBF ensemble of the two real models (YOLOv8m v5 + YOLO11m v7).
-# Fusing two architectures combines their strengths -> best held-out test F1 (~0.89),
-# precision 0.905, recall 0.878. It runs BOTH models, so it is ~2x slower than a single model.
+# MAXIMUM-ACCURACY profile: WBF ensemble of three real models (YOLOv8m v5 + YOLO11m v7 + v8).
+# Fusing them maximizes precision -> held-out test F1 ~0.89, precision 0.928, recall 0.859
+# (fewer false positives). It runs all three models, so it is ~3x slower than a single model.
 # For a lighter, single-model run (F1 0.88) use configs/banana_real_model.yaml (v7).
 detector: yolo-ensemble
 ensemble_model_paths:
   - models/banana_real_v5.pt
   - models/banana_real_v7.pt
-ensemble_weights: [1.0, 1.2]
-confidence_threshold: 0.20
+  - models/banana_real_v8.pt
+ensemble_weights: [1.0, 1.2, 1.0]
+confidence_threshold: 0.22
 iou_threshold: 0.45
 gsd_cm: 2.0
 expected_crown_diameter_m: 2.4

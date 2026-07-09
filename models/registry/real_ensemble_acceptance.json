@@ -1,17 +1,19 @@
 {
   "config": "configs/banana_ensemble.yaml",
-  "method": "Weighted Boxes Fusion ensemble of banana_real_v5.pt (YOLOv8m) + banana_real_v7.pt (YOLO11m)",
-  "weights": [1.0, 1.2],
-  "eval_method": "held-out test (50 images, 1166 plants), imgsz 1024, conf 0.20, greedy IoU>=0.5 matching",
+  "method": "Weighted Boxes Fusion ensemble of banana_real_v5.pt (YOLOv8m) + banana_real_v7.pt (YOLO11m) + banana_real_v8.pt (YOLO11m)",
+  "weights": [1.0, 1.2, 1.0],
+  "eval_method": "held-out test (50 images, 1166 plants), imgsz 1024, conf 0.22, greedy IoU>=0.5 matching",
   "metrics": {
-    "precision": 0.905,
-    "recall": 0.878,
-    "f1": 0.8916
+    "precision": 0.928,
+    "recall": 0.859,
+    "f1": 0.8923
   },
   "comparison": {
     "v5_single_f1": 0.8747,
     "v7_single_f1": 0.8795,
-    "ensemble_f1": 0.8916
+    "v8_single_f1": 0.8586,
+    "ensemble_v5_v7_f1": 0.8916,
+    "ensemble_v5_v7_v8_f1": 0.8923
   },
-  "note": "Best detection result of the v2..v7 line. Fusing two architectures combines YOLOv8m precision with YOLO11m recall (both high: P 0.905, R 0.878). Cost: runs both models (~2x inference). Single farm/region; recalibrate per farm for deployment."
+  "note": "Best precision of the model line (0.928 -> fewest false positives) at the same F1 as the 2-model ensemble. Fusing three models trades a little recall for precision. Cost: runs three models (~3x inference). Single farm/region; recalibrate per farm for deployment."
 }
