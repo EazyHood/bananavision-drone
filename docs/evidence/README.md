@@ -1,8 +1,9 @@
 # Counting evidence — BananaVision
 
-Visual proof of the **ensemble** (`banana_real_v5.pt` + `banana_real_v7.pt`, Weighted Boxes
-Fusion) counting banana plants on **200 real UAV images the models NEVER saw** (`valid` + `test`
-splits of the count-banana-plants dataset). Fully reproducible with the scripts in `real_data/`.
+Visual proof of the **ensemble** (`banana_real_v5.pt` + `banana_real_v7.pt` + `banana_real_v8.pt`,
+Weighted Boxes Fusion) counting banana plants — with a **crown marker** (red dot) on each rosette,
+1–3 per mat — on real UAV images the models NEVER saw (`valid` + `test` splits of the
+count-banana-plants dataset). Fully reproducible with the scripts in `real_data/`.
 
 ## 1. AI count vs real count
 
@@ -12,8 +13,8 @@ Each point is an image (X = real plants, Y = plants counted by the AI). The diag
 is a perfect count.
 
 - **TOTAL: 3,132 real plants vs 3,141 counted → 99.7 % in this batch.**
-- **Best detection quality of the model line: F1 0.89** (precision 0.905, recall 0.878),
-  fusing YOLOv8m (v5) + YOLO11m (v7). See `models/registry/real_ensemble_acceptance.json`.
+- **Best detection quality of the model line: F1 0.89** (precision 0.93, recall 0.86),
+  fusing three models (v5+v7+v8). See `models/registry/real_ensemble_acceptance.json`.
 
 ## 2. Detection on real plants
 
