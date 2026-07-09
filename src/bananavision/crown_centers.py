@@ -1,10 +1,14 @@
 """Crown-center detection inside each plant box.
 
-A banana plant seen from nadir is a ROSETTE: leaves radiate from a central point.
-Banana grows in mats of ~2-3 plants, so a single detection box can contain up to
-three rosettes. This module finds those crown centers inside each box using the
-Fast Radial Symmetry Transform (FRST), so the overlay can mark a small dot on each
-plant crown (1-3 per mat), not just the box.
+A banana plant seen from nadir is a ROSETTE of leaves radiating from a central
+pseudostem. Banana grows in mats of ~2-3 plants, so a detection box can hold more
+than one rosette. This module marks a dot at the CENTER of each rosette inside a
+box, so the overlay shows where each banana actually is (1-3 per mat).
+
+Method: within each box, threshold the vegetation (excess green), take its
+distance transform, and read the peaks. The distance-transform peak of a green
+blob sits at its geometric center, so each dot lands in the middle of a plant's
+foliage — not on a leaf edge.
 
 Centers are stored on each Detection as meta["crown_centers"] = [[x, y], ...] in
 full-image pixel coordinates.
@@ -17,64 +21,38 @@ from PIL import Image
 from .models import Detection, InferenceConfig
 
 
-def _frst(gray: np.ndarray, radii: list[int], alpha: float = 2.0, grad_frac: float = 0.15) -> np.ndarray:
+def _centers_in_box(rgb_box: np.ndarray, crown_px: float, max_centers: int) -> list[tuple[float, float]]:
     from scipy import ndimage as ndi
-
-    gray = np.asarray(gray, dtype=np.float32)
-    h, w = gray.shape
-    gx = ndi.sobel(gray, axis=1, mode="reflect")
-    gy = ndi.sobel(gray, axis=0, mode="reflect")
-    mag = np.hypot(gx, gy)
-    mmax = float(mag.max())
-    if mmax <= 0:
-        return np.zeros((h, w), np.float32)
-    ys, xs = np.nonzero(mag > grad_frac * mmax)
-    if ys.size == 0:
-        return np.zeros((h, w), np.float32)
-    gmag = mag[ys, xs]
-    ux, uy = gx[ys, xs] / gmag, gy[ys, xs] / gmag
-    out = np.zeros((h, w), np.float32)
-    for n in radii:
-        if n < 1:
-            continue
-        on = np.zeros((h, w), np.float32)
-        mn = np.zeros((h, w), np.float32)
-        px = np.clip(xs + np.round(ux * n).astype(np.int64), 0, w - 1)
-        py = np.clip(ys + np.round(uy * n).astype(np.int64), 0, h - 1)
-        np.add.at(on, (py, px), 1.0)
-        np.add.at(mn, (py, px), gmag)
-        kappa = 9.9 if n > 1 else 8.0
-        on = np.clip(np.abs(on), None, kappa)
-        fn = (on / kappa) ** alpha * (np.abs(mn) / kappa)
-        out += ndi.gaussian_filter(fn, sigma=max(0.5, 0.25 * n))
-    return out / max(1, len(radii))
-
-
-def _centers_in_box(gray_box: np.ndarray, crown_px: float, max_centers: int) -> list[tuple[float, float]]:
     from skimage.feature import peak_local_max
 
-    h, w = gray_box.shape
+    h, w = rgb_box.shape[:2]
     if min(h, w) < 6:
         return [(w / 2.0, h / 2.0)]
-    r = max(2.0, crown_px / 2.0)
-    radii = [int(round(r * f)) for f in (0.5, 0.75, 1.0) if r * f >= 1]
-    radii = sorted({max(1, x) for x in radii}) or [2]
-    score = _frst(gray_box, radii)
-    if score.max() <= 0:
+    a = rgb_box.astype(np.float32) / 255.0
+    exg = 2.0 * a[..., 1] - a[..., 0] - a[..., 2]
+    mask = exg > 0.04
+    if mask.sum() < max(12, 0.03 * h * w):
         return [(w / 2.0, h / 2.0)]
-    min_dist = max(2, int(r * 0.7))
-    pos = score[score > 0]
-    ref = float(np.percentile(pos, 99)) if pos.size else float(score.max())
+
+    # Distance transform: high at the center of each green blob, low near edges/gaps.
+    dist = ndi.distance_transform_edt(mask).astype(np.float32)
+    dist = ndi.gaussian_filter(dist, sigma=max(1.0, 0.12 * crown_px))
+    if dist.max() <= 0:
+        ys, xs = np.nonzero(mask)
+        return [(float(xs.mean()), float(ys.mean()))]
+
+    min_dist = max(3, int(round(0.55 * crown_px)))
     peaks = peak_local_max(
-        score,
+        dist,
         min_distance=min_dist,
-        threshold_abs=0.25 * ref,
         num_peaks=max_centers,
+        threshold_rel=0.45,
         exclude_border=False,
     )
     if len(peaks) == 0:
-        return [(w / 2.0, h / 2.0)]
-    return [(float(c), float(rr)) for rr, c in peaks]  # (x, y)
+        ys, xs = np.nonzero(mask)
+        return [(float(xs.mean()), float(ys.mean()))]
+    return [(float(c), float(r)) for r, c in peaks]  # (x, y)
 
 
 def attach_crown_centers(
@@ -83,8 +61,8 @@ def attach_crown_centers(
     """Fill detection.meta['crown_centers'] with 1-3 rosette centers per box."""
     if not detections:
         return
-    gray = np.asarray(image.convert("L"), dtype=np.float32)
-    ih, iw = gray.shape
+    rgb = np.asarray(image.convert("RGB"))
+    ih, iw = rgb.shape[:2]
     try:
         crown_px = config.expected_crown_diameter_px
     except Exception:
@@ -98,8 +76,8 @@ def attach_crown_centers(
             det.meta["crown_centers"] = [[float(det.center[0]), float(det.center[1])]]
             continue
         box_area = (bx2 - bx1) * (by2 - by1)
-        # Expect 1-3 plants per mat; scale by how many crowns fit in the box.
-        est = int(round(box_area / max(1.0, crown_area)))
+        # Most boxes are a single plant; only clearly large boxes can hold 2-3.
+        est = int(np.floor(box_area / max(1.0, 0.85 * crown_area)))
         max_centers = min(3, max(1, est))
-        local = _centers_in_box(gray[by1:by2, bx1:bx2], crown_px, max_centers)
+        local = _centers_in_box(rgb[by1:by2, bx1:bx2], crown_px, max_centers)
         det.meta["crown_centers"] = [[bx1 + cx, by1 + cy] for cx, cy in local]
