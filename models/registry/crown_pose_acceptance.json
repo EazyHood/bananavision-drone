@@ -1,0 +1,17 @@
+{
+  "model": "banana_crown_pose.pt",
+  "task": "keypoint (crown center) detection",
+  "base": "yolo11s-pose",
+  "trained_on": "count-banana-plants train/valid (8,601 human per-plant boxes; keypoint = rosette center derived by distance transform inside each box)",
+  "imgsz": 480,
+  "epochs": 100,
+  "eval_method": "held-out test (50 images, 983 matched boxes IoU>=0.3), keypoint error vs derived-GT normalized by image diagonal",
+  "keypoint_error": {
+    "mean_pct_diag": 1.78,
+    "median_pct_diag": 1.51,
+    "p90_pct_diag": 3.34,
+    "mean_px_at_480": 12.1
+  },
+  "role": "Provides the crown marker (red dot) inside each detection box. Enabled with crown_method: pose in configs/banana_ensemble.yaml; the geometric estimate is the fallback for any box the model leaves unmarked.",
+  "note": "The keypoint label is derived from the human boxes (rosette center), not hand-clicked pseudostems, so the model learns that definition of center. The gain over the geometric rule is that the point now adapts to each plant's appearance and is learned from 8,601 real examples instead of computed per-tile. Single farm/region; recalibrate/relabel for a new farm."
+}

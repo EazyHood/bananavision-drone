@@ -1,9 +1,10 @@
 # Counting evidence — BananaVision
 
 Visual proof of the **ensemble** (`banana_real_v5.pt` + `banana_real_v7.pt` + `banana_real_v8.pt`,
-Weighted Boxes Fusion) counting banana plants — with a **crown marker** (red dot) on each rosette,
-1–3 per mat — on real UAV images the models NEVER saw (`valid` + `test` splits of the
-count-banana-plants dataset). Fully reproducible with the scripts in `real_data/`.
+Weighted Boxes Fusion) counting banana plants — with a **crown marker** (red dot) placed by a
+**trained keypoint model** (`banana_crown_pose.pt`, learned on 8,601 real plants; ~1.8 % mean error
+of the image diagonal on held-out tiles) on each rosette — on real UAV images the models NEVER saw
+(`valid` + `test` splits of the count-banana-plants dataset). Fully reproducible with the scripts in `real_data/`.
 
 ## 1. AI count vs real count
 

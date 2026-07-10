@@ -98,7 +98,7 @@ python real_data/calibrate_count.py --weights models/banana_real_v7.pt --data-ro
 - Production path for YOLO segmentation models, including training, validation, ONNX export, and TensorRT export.
 - Banana-mat splitting logic based on expected crown diameter, canopy area, and peak separation.
 - CSV, JSON, overlay image, GeoJSON, and KML outputs.
-- Crown-center markers: a small dot on each banana crown (1–3 per mat, via radial-symmetry detection) inside every detection box, saved to the overlay and to each detection's `crown_centers`.
+- Crown-center markers: a small dot on each banana crown (1–3 per mat) inside every detection box, saved to the overlay and to each detection's `crown_centers`. Two methods: a **trained keypoint model** (`crown_method: pose`, `banana_crown_pose.pt`, learned on 8,601 real plants, ~1.8 % mean error of the image diagonal) or a geometric distance-transform estimate (`crown_method: geometric`, no model needed). The pose method falls back to geometric for any unmarked box.
 - Per-run manifest with config hash, model hash, environment, latency, and mission summary.
 - Mission-level duplicate suppression for overlapping drone frames.
 - World-file, GeoTIFF, and EXIF GPS georeference detection.

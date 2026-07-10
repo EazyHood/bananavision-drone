@@ -74,14 +74,64 @@ def _centers_in_box(rgb_box: np.ndarray, crown_px: float, max_centers: int) -> l
     return centers
 
 
+_POSE_MODELS: dict[str, object] = {}
+
+
+def _load_pose(model_path: str):
+    model = _POSE_MODELS.get(model_path)
+    if model is None:
+        from ultralytics import YOLO
+
+        model = YOLO(model_path)
+        _POSE_MODELS[model_path] = model
+    return model
+
+
+def _pose_keypoints(image: Image.Image, config: InferenceConfig) -> np.ndarray | None:
+    """Run the trained keypoint model once; return an (N, 2) array of crown points."""
+    try:
+        model = _load_pose(config.crown_model_path or "")
+        res = model.predict(
+            image, conf=max(0.05, config.confidence_threshold * 0.5), verbose=False
+        )[0]
+        if res.keypoints is None:
+            return None
+        kp = res.keypoints.xy.cpu().numpy()  # (N, 1, 2) in pixels
+        if kp.size == 0:
+            return None
+        return kp.reshape(-1, 2)
+    except Exception:
+        return None  # any failure falls back to the geometric method
+
+
+def _assign_pose_centers(det: Detection, points: np.ndarray, max_centers: int) -> list[list[float]] | None:
+    x1, y1, x2, y2 = det.bbox
+    inside = points[
+        (points[:, 0] >= x1) & (points[:, 0] <= x2)
+        & (points[:, 1] >= y1) & (points[:, 1] <= y2)
+    ]
+    if len(inside) == 0:
+        return None
+    cx, cy = det.center
+    order = np.argsort(np.hypot(inside[:, 0] - cx, inside[:, 1] - cy))
+    return [[float(inside[i, 0]), float(inside[i, 1])] for i in order[:max_centers]]
+
+
 def attach_crown_centers(
     image: Image.Image, detections: list[Detection], config: InferenceConfig
 ) -> None:
-    """Fill detection.meta['crown_centers'] with 1-3 rosette centers per box."""
+    """Fill detection.meta['crown_centers'] with 1-3 rosette centers per box.
+
+    With crown_method='pose' the points come from the trained keypoint model and
+    fall back to the geometric estimate for any box the model left unmarked.
+    """
     if not detections:
         return
     rgb = np.asarray(image.convert("RGB"))
     ih, iw = rgb.shape[:2]
+    pose_points = (
+        _pose_keypoints(image, config) if config.crown_method == "pose" else None
+    )
     try:
         crown_px = config.expected_crown_diameter_px
     except Exception:
@@ -98,5 +148,10 @@ def attach_crown_centers(
         # Most boxes are a single plant; only clearly large boxes can hold 2-3.
         est = int(np.floor(box_area / max(1.0, 0.85 * crown_area)))
         max_centers = min(3, max(1, est))
+        if pose_points is not None:
+            assigned = _assign_pose_centers(det, pose_points, max_centers)
+            if assigned is not None:
+                det.meta["crown_centers"] = assigned
+                continue
         local = _centers_in_box(rgb[by1:by2, bx1:bx2], crown_px, max_centers)
         det.meta["crown_centers"] = [[bx1 + cx, by1 + cy] for cx, cy in local]

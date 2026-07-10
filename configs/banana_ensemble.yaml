@@ -23,3 +23,8 @@ tile_overlap: 128
 class_name: banana_plant
 rgb_threshold_quantile: 0.82
 output_overlay: true
+# Crown markers from the trained keypoint model (learned on 8,601 real plants);
+# falls back to the geometric estimate for any box it leaves unmarked.
+mark_crown_centers: true
+crown_method: pose
+crown_model_path: models/banana_crown_pose.pt

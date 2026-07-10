@@ -35,6 +35,8 @@ class InferenceConfig:
     rgb_threshold_quantile: float = 0.82
     output_overlay: bool = True
     mark_crown_centers: bool = True
+    crown_method: str = "geometric"
+    crown_model_path: str | None = None
     mission_geo_dedupe_distance_m: float = 1.2
     mission_pixel_dedupe_distance_px: float = 32.0
 
@@ -59,6 +61,10 @@ class InferenceConfig:
             raise ValueError(
                 "ensemble_model_paths (at least 2) is required when detector='yolo-ensemble'"
             )
+        if self.crown_method not in {"geometric", "pose"}:
+            raise ValueError("crown_method must be 'geometric' or 'pose'")
+        if self.crown_method == "pose" and not self.crown_model_path:
+            raise ValueError("crown_model_path is required when crown_method='pose'")
         if not 0.0 <= self.confidence_threshold <= 1.0:
             raise ValueError("confidence_threshold must be between 0 and 1")
         if not 0.0 <= self.iou_threshold <= 1.0:
