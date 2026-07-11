@@ -17,14 +17,16 @@ is a perfect count.
 - **Best detection quality of the model line: F1 0.89** (precision 0.93, recall 0.86),
   fusing three models (v5+v7+v8). See `models/registry/real_ensemble_acceptance.json`.
 
-## 2. Detection on real plants
+## 2. Detection + crown centers on real plants
 
 ![Examples](montage_examples.png)
 
 ![Animation](detection_banana.gif)
 
-The boxes land on real banana crowns (not on paths or weeds), across tiles
-ranging from sparse to very dense.
+Boxes and a **crown center** (red dot) from the trained keypoint model
+(`banana_crown_pose.pt`): each dot is placed in the middle of its plant, learned
+from 8,601 real plants (~1.8 % mean error of the image diagonal). The boxes land on
+real banana crowns (not on paths or weeds), across tiles from sparse to very dense.
 
 ## 3. What this proves — and what it does NOT (100 % honest)
 
