@@ -62,6 +62,14 @@ Weighted Boxes Fusion** — held-out real test **F1 0.89, precision 0.93, recall
 fewest false positives of the whole model line). It runs all three models, so it is ~3× slower
 than the single-model default. Needs `pip install "bananavision-drone[ml]"` (includes `ensemble-boxes`).
 
+**🌎 Multi-farm (generalist):** `configs/banana_multifarm.yaml` runs
+**`banana_multifarm_v10.pt`**, trained on the original farm **plus 5 independent plantain
+farms from another region** (~5,100 extra images, leakage-checked). On a **cross-farm holdout**
+(unseen images of the new farms) it scores **mAP50 0.75 where the single-farm models score ~0** —
+use it on any farm the specialists never saw, then calibrate the count locally
+(`real_data/calibrate_count.py`). On the original farm the ensemble above remains the best choice
+(v10 there: mAP50 0.88). Honest trade-off, both ship.
+
 ### 🎯 Crop count accuracy: **98%** (validated by cross-validation)
 
 For the **total crop count** —the number a farm cares about for its inventory—

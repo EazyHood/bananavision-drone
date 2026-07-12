@@ -1,0 +1,26 @@
+# MULTI-FARM (generalist) profile: banana_multifarm_v10.pt (YOLO11m, imgsz 768).
+# Trained on the original farm PLUS 5 independent plantain farms from another region
+# (~5,100 extra images). Use this on farms the specialist models never saw:
+#   - cross-farm holdout mAP50 0.747 (the single-farm models score ~0 there)
+#   - original farm mAP50 0.877 (below the ensemble; use banana_ensemble.yaml there)
+# Always run a per-farm count calibration before trusting totals on a new farm.
+detector: yolo-seg
+model_path: models/banana_multifarm_v10.pt
+confidence_threshold: 0.35
+iou_threshold: 0.45
+gsd_cm: 2.0
+expected_crown_diameter_m: 2.4
+min_component_area_px: 80
+split_mat_clusters: true
+min_center_distance_ratio: 0.42
+center_distance_weight: 0.35
+canopy_fill_ratio: 0.58
+max_split_instances: 12
+tile_size: 1024
+tile_overlap: 128
+class_name: banana_plant
+rgb_threshold_quantile: 0.82
+output_overlay: true
+mark_crown_centers: true
+crown_method: pose
+crown_model_path: models/banana_crown_pose.pt

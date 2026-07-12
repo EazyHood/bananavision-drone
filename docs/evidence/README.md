@@ -13,9 +13,12 @@ of the image diagonal on held-out tiles) on each rosette — on real UAV images 
 Each point is an image (X = real plants, Y = plants counted by the AI). The diagonal
 is a perfect count.
 
-- **TOTAL: 3,132 real plants vs 3,141 counted → 99.7 % in this batch.**
+- **TOTAL: 3,132 real plants vs 3,119 counted → 99.6 % in this batch** (3-model ensemble, R²=0.81).
 - **Best detection quality of the model line: F1 0.89** (precision 0.93, recall 0.86),
   fusing three models (v5+v7+v8). See `models/registry/real_ensemble_acceptance.json`.
+- **Multi-farm:** `banana_multifarm_v10.pt` extends detection to farms the specialists never saw
+  (cross-farm holdout mAP50 0.75 vs ~0 for single-farm models). See
+  `models/registry/real_multifarm_v10.json`.
 
 ## 2. Detection + crown centers on real plants
 
